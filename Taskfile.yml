@@ -25,7 +25,7 @@ tasks:
     cmds:
       - task: compose
         vars:
-          TASK_ARGS: run --rm phpfpm vendor/bin/phpunit tests/
+          TASK_ARGS: run --rm phpfpm vendor/bin/phpunit
 
   coding-standards:apply:
     desc: "Apply coding standards"

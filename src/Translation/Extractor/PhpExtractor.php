@@ -1,11 +1,9 @@
 <?php
 
-namespace Drupal\itk_translation_extractor\Extractor;
+namespace Drupal\itk_translation_extractor\Translation\Extractor;
 
-use NodeVisitor\NameResolver;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor;
-use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use Symfony\Component\Finder\Finder;
@@ -16,6 +14,8 @@ use Symfony\Component\Translation\MessageCatalogue;
 
 /**
  * PhpExtractor is lifted from \Symfony\Component\Translation\Extractor\PhpAstExtractor.
+ *
+ * @see \Symfony\Component\Translation\Extractor\PhpAstExtractor
  */
 class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
 {
@@ -41,7 +41,7 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
             $traverser = new NodeTraverser();
 
             // This is needed to resolve namespaces in class methods/constants.
-            $nameResolver = new NameResolver();
+            $nameResolver = new NodeVisitor\NameResolver();
             $traverser->addVisitor($nameResolver);
 
             foreach ($this->visitors as $visitor) {
@@ -62,8 +62,8 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
     protected function canBeExtracted(string $file): bool
     {
         return 'php' === pathinfo($file, \PATHINFO_EXTENSION)
-          && $this->isFile($file)
-          && preg_match('/\bt\(|->trans\(|TranslatableMessage|Symfony\\\\Component\\\\Validator\\\\Constraints/i', file_get_contents($file));
+            && $this->isFile($file)
+            && preg_match('/\bt\(|->t(?:rans)?\(|TranslatableMarkup/i', file_get_contents($file));
     }
 
     protected function extractFromDirectory(array|string $resource): iterable|Finder

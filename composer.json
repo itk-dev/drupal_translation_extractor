@@ -1,5 +1,7 @@
 {
     "name": "drupal/itk_translation_extractor",
+    "description": "itk_translation_extractor",
+    "license": "MIT",
     "type": "drupal-custom-module",
     "require": {
         "drupal/core": "^10 || ^11",
@@ -8,8 +10,8 @@
     },
     "require-dev": {
         "ergebnis/composer-normalize": "^2.48",
-        "phpunit/phpunit": "^12.5",
         "friendsofphp/php-cs-fixer": "^3.91",
+        "phpunit/phpunit": "^12.5",
         "vincentlanglet/twig-cs-fixer": "^3.11"
     },
     "autoload": {
