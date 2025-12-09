@@ -1,0 +1,8 @@
+services:
+  itk_translation_extractor.translation_extract:
+    class: Drupal\itk_translation_extractor\Command\TranslationExtractCommand
+    arguments:
+      - "@twig"
+      - "@extension.path.resolver"
+    tags:
+      - { name: console.command }

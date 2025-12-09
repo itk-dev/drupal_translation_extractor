@@ -2,7 +2,6 @@
 
 namespace Drupal\itk_translation_extractor\Extractor\Visitor;
 
-use Drupal\itk_translation_extractor\Extractor\Visitor\Trait\ArrayValueTrait;
 use PhpParser\Node;
 use PhpParser\NodeVisitor;
 use Symfony\Component\Translation\Extractor\Visitor\AbstractVisitor;

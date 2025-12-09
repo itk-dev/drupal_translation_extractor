@@ -1,0 +1,5 @@
+name: itk_translation_extractor
+type: module
+description: "itk_translation_extractor"
+package: ITK
+core_version_requirement: ^10 || ^11
