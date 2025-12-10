@@ -6,7 +6,7 @@
 
 {# https://www.drupal.org/docs/8/api/translation-api/overview#s-translation-in-twig-templates #}
 
-{% trans %}Hello {{username}}.{% endtrans %}
+{% trans %}Hello {{ username }}.{% endtrans %}
 
 {% set count = 1 %}
 {% trans %}
@@ -15,7 +15,7 @@
   Hello {{ count }} stars.
 {% endtrans %}
 
-{% trans with {'context': 'Long month name', 'langcode': 'hu'} %}
+{% trans with {context: 'Long month name', langcode: 'hu'} %}
   May
 {% endtrans %}
-{% trans 'May' with {'context': 'Long month name', 'langcode': 'hu'} %}
+{% trans 'May' with {context: 'Long month name', langcode: 'hu'} %}

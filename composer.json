@@ -2,7 +2,7 @@
     "name": "drupal/itk_translation_extractor",
     "description": "itk_translation_extractor",
     "license": "MIT",
-    "type": "drupal-custom-module",
+    "type": "drupal-module",
     "require": {
         "drupal/core": "^10 || ^11",
         "symfony/translation": "^6 || ^7 || ^8",
