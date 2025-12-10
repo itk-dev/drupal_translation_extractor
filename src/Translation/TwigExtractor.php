@@ -33,7 +33,13 @@ class TwigExtractor extends BaseTwigExtractor
         $visitor->enable();
         $this->twig->parse($this->twig->tokenize(new Source($template, '')));
         foreach ($visitor->getMessages() as $message) {
-            $catalogue->set(trim($message[0]), $this->prefix.trim($message[0]), $message[1] ?: $this->defaultDomain);
+            $id = trim($message[0]);
+            $translation = $this->prefix.trim($message[0]);
+            $domain = $message[1] ?: $this->defaultDomain;
+            $catalogue->set($id, $translation, $domain);
+            if ($metadata = ($message[2] ?? null)) {
+                $catalogue->setMetadata($id, $metadata, $domain);
+            }
         }
 
         $visitor->disable();

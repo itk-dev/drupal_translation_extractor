@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Drupal\itk_translation_extractor\Test\unit\Extractor;
+
 use Drupal\itk_translation_extractor\Translation\Extractor\PhpExtractor;
 use Drupal\itk_translation_extractor\Translation\Extractor\Visitor\TranslatableMarkupVisitor;
 use Drupal\itk_translation_extractor\Translation\Extractor\Visitor\TransMethodVisitor;

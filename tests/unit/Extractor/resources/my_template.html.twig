@@ -1,3 +1,4 @@
+{# https://www.drupal.org/docs/8/api/translation-api/overview#s-translation-in-twig-templates #}
 {{ 't filter'|t }}
 {{ 't filter with options context'|t(options: {context: 'the context'}) }}
 {{ 't filter with context'|t({}, {context: 'another context'}) }}
@@ -8,21 +9,3 @@
 
 {% trans %}trans tag{% endtrans %}
 {% trans with {context: 'the context'} %}trans tag with context{% endtrans %}
-
-{# https://www.drupal.org/docs/8/api/translation-api/overview#s-translation-in-twig-templates #}
-{#
-
-{% trans %}Hello {{ username }}.{% endtrans %}
-
-{% set count = 1 %}
-{% trans %}
-  Hello star.
-{% plural count %}
-  Hello {{ count }} stars.
-{% endtrans %}
-
-{% trans with {context: 'Long month name', langcode: 'hu'} %}
-  May
-{% endtrans %}
-{% trans 'May' with {context: 'Long month name', langcode: 'hu'} %}
-#}
