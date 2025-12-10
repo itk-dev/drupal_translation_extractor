@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\itk_translation_extractor\Command;
 
 use Drupal\Core\Extension\ExtensionPathResolver;
+use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\itk_translation_extractor\Translation\Dumper\PoFileDumper;
 use Drupal\itk_translation_extractor\Translation\TwigExtractor;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -64,6 +66,8 @@ final class TranslationExtractCommand extends Command
         // #[Autowire(service: 'twig')]
         private readonly Environment $twig,
         private readonly ExtensionPathResolver $extensionPathResolver,
+        private readonly LanguageManagerInterface $languageManager,
+        FileSystemInterface $fileSystem,
     ) {
         $this->extractor = new TwigExtractor($this->twig);
 
@@ -71,7 +75,9 @@ final class TranslationExtractCommand extends Command
         $this->reader->addLoader('po', new PoFileLoader());
 
         $this->writer = new TranslationWriter();
-        $this->writer->addDumper('po', new PoFileDumper());
+        $this->writer->addDumper('po', new PoFileDumper(
+            fileSystem: $fileSystem,
+        ));
 
         parent::__construct();
     }
@@ -161,11 +167,6 @@ EOF
 
             return 1;
         }
-
-        //    /** @var KernelInterface $kernel */
-        //    $kernel = $this->getApplication()->getKernel();
-
-        // @todo Do something with modules and themes here …
 
         // Define Root Paths
         $transPaths = $this->getRootTransPaths($input);
@@ -302,7 +303,23 @@ EOF
                 $this->removeNoFillTranslations($operationResult);
             }
 
-            $this->writer->write($operationResult, $format, ['path' => $bundleTransPath, 'default_locale' => $this->defaultLocale, 'xliff_version' => $xliffVersion, 'as_tree' => $input->getOption('as-tree'), 'inline' => $input->getOption('as-tree') ?? 0]);
+            $outputName = $input->getOption('output-name');
+            $dumperOptions = [
+                'path' => dirname($outputName),
+                'output_name' => basename($outputName),
+                // 'default_locale' => $this->defaultLocale,
+                'xliff_version' => $xliffVersion,
+                'as_tree' => $input->getOption('as-tree'),
+                'inline' => $input->getOption('as-tree') ?? 0,
+            ];
+
+            if ($language = $this->languageManager->getLanguage($input->getArgument('locale'))) {
+                $dumperOptions['language_name'] = $language->getName();
+            }
+            // @todo
+            // $dumperOptions['project_name'] = …
+
+            $this->writer->write($operationResult, $format, $dumperOptions);
 
             if (true === $input->getOption('dump-messages')) {
                 $resultMessage .= ' and translation files were updated';

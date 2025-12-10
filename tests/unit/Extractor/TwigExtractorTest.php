@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Drupal\Core\Template\TwigTransTokenParser;
 use Drupal\itk_translation_extractor\ItkTranslationExtractorTwigExtension;
 use Drupal\itk_translation_extractor\Translation\TwigExtractor;
 use PHPUnit\Framework\TestCase;
@@ -29,7 +30,7 @@ final class TwigExtractorTest extends TestCase
         $this->assertContains('another context', $domains);
         $this->assertCount(3, $messages->all(''));
         $this->assertCount(3, $messages->all('the context'));
-        $this->assertCount(3, $messages->all('another context'));
+        $this->assertCount(2, $messages->all('another context'));
     }
 
     private function twig(): Environment
@@ -39,6 +40,7 @@ final class TwigExtractorTest extends TestCase
         $twig->addFilter(new Twig\TwigFilter('t', $trans));
         $twig->addFilter(new Twig\TwigFilter('trans', $trans));
         $twig->addExtension(new ItkTranslationExtractorTwigExtension());
+        $twig->addTokenParser(new TwigTransTokenParser());
 
         return $twig;
     }

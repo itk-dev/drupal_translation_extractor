@@ -2,8 +2,9 @@
 
 namespace Drupal\itk_translation_extractor\NodeVisitor;
 
-use Symfony\Bridge\Twig\Node\TransNode;
+use Drupal\Core\Template\TwigNodeTrans as TransNode;
 use Twig\Environment;
+use Twig\Node\Expression\ArrayExpression;
 use Twig\Node\Expression\Binary\ConcatBinary;
 use Twig\Node\Expression\ConstantExpression;
 use Twig\Node\Expression\FilterExpression;
@@ -48,10 +49,10 @@ final class TranslationNodeVisitor implements NodeVisitorInterface
 
         if (
             $node instanceof FilterExpression
-            && 'trans' === ($node->hasAttribute('twig_callable') ? $node->getAttribute('twig_callable')->getName() : $node->getNode('filter')->getAttribute('value'))
+            && in_array($node->hasAttribute('twig_callable') ? $node->getAttribute('twig_callable')->getName() : $node->getNode('filter')->getAttribute('value'), ['t', 'trans'], true)
             && $node->getNode('node') instanceof ConstantExpression
         ) {
-            // extract constant nodes with a trans filter
+            // extract constant nodes with a t(rans) filter
             $this->messages[] = [
                 $node->getNode('node')->getAttribute('value'),
                 $this->getReadDomainFromArguments($node->getNode('arguments'), 1),
@@ -72,11 +73,11 @@ final class TranslationNodeVisitor implements NodeVisitorInterface
             // extract trans nodes
             $this->messages[] = [
                 $node->getNode('body')->getAttribute('data'),
-                $node->hasNode('domain') ? $this->getReadDomainFromNode($node->getNode('domain')) : null,
+                $node->hasNode('options') ? $this->getReadDomainFromNode($node->getNode('options')) : null,
             ];
         } elseif (
             $node instanceof FilterExpression
-            && 'trans' === ($node->hasAttribute('twig_callable') ? $node->getAttribute('twig_callable')->getName() : $node->getNode('filter')->getAttribute('value'))
+            && in_array($node->hasAttribute('twig_callable') ? $node->getAttribute('twig_callable')->getName() : $node->getNode('filter')->getAttribute('value'), ['t', 'trans'], true)
             && $node->getNode('node') instanceof ConcatBinary
             && $message = $this->getConcatValueFromNode($node->getNode('node'), null)
         ) {
@@ -123,8 +124,8 @@ final class TranslationNodeVisitor implements NodeVisitorInterface
 
     private function getReadDomainFromArguments(Node $arguments, int $index): ?string
     {
-        if ($arguments->hasNode('domain')) {
-            $argument = $arguments->getNode('domain');
+        if ($arguments->hasNode('options')) {
+            $argument = $arguments->getNode('options');
         } elseif ($arguments->hasNode($index)) {
             $argument = $arguments->getNode($index);
         } else {
@@ -136,22 +137,11 @@ final class TranslationNodeVisitor implements NodeVisitorInterface
 
     private function getReadDomainFromNode(Node $node): ?string
     {
-        if ($node instanceof ConstantExpression) {
-            return $node->getAttribute('value');
-        }
-
-        if (
-            $node instanceof FunctionExpression
-            && 'constant' === $node->getAttribute('name')
-        ) {
-            $nodeArguments = $node->getNode('arguments');
-            if ($nodeArguments->getIterator()->current() instanceof ConstantExpression) {
-                $constantName = $nodeArguments->getIterator()->current()->getAttribute('value');
-                if (\defined($constantName)) {
-                    $value = \constant($constantName);
-                    if (\is_string($value)) {
-                        return $value;
-                    }
+        if ($node instanceof ArrayExpression) {
+            foreach ($node->getKeyValuePairs() as $pair) {
+                $key = $this->getConcatValueFromNode($pair['key'], '');
+                if ('context' === $key) {
+                    return $this->getConcatValueFromNode($pair['value'], '');
                 }
             }
         }

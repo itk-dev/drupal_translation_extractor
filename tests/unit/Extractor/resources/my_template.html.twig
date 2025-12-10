@@ -1,10 +1,16 @@
-{{ 'trans filter'|trans }}
 {{ 't filter'|t }}
+{{ 't filter with options context'|t(options: {context: 'the context'}) }}
+{{ 't filter with context'|t({}, {context: 'another context'}) }}
 
+{{ 'trans filter'|trans }}
 {{ 'trans filter with options context'|trans(options: {context: 'the context'}) }}
 {{ 'trans filter with context'|trans({}, {context: 'another context'}) }}
 
+{% trans %}trans tag{% endtrans %}
+{% trans with {context: 'the context'} %}trans tag with context{% endtrans %}
+
 {# https://www.drupal.org/docs/8/api/translation-api/overview#s-translation-in-twig-templates #}
+{#
 
 {% trans %}Hello {{ username }}.{% endtrans %}
 
@@ -19,3 +25,4 @@
   May
 {% endtrans %}
 {% trans 'May' with {context: 'Long month name', langcode: 'hu'} %}
+#}

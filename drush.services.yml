@@ -4,5 +4,7 @@ services:
     arguments:
       - "@twig"
       - "@extension.path.resolver"
+      - "@language_manager"
+      - "@file_system"
     tags:
       - { name: console.command }
