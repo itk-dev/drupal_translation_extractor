@@ -1,0 +1,31 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\itk_translation_extractor;
+
+use Drupal\itk_translation_extractor\NodeVisitor\TranslationNodeVisitor;
+use Twig\Extension\AbstractExtension;
+
+/**
+ * Twig extension.
+ */
+final class ItkTranslationExtractorTwigExtension extends AbstractExtension
+{
+    public function __construct(
+        private ?TranslationNodeVisitor $translationNodeVisitor = null,
+    ) {
+    }
+
+    public function getNodeVisitors(): array
+    {
+        return [
+            $this->getTranslationNodeVisitor(),
+        ];
+    }
+
+    public function getTranslationNodeVisitor(): TranslationNodeVisitor
+    {
+        return $this->translationNodeVisitor ?: $this->translationNodeVisitor = new TranslationNodeVisitor();
+    }
+}

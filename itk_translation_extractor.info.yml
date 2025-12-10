@@ -1,4 +1,4 @@
-name: itk_translation_extractor
+name: Translation extractor
 type: module
 description: "itk_translation_extractor"
 package: ITK

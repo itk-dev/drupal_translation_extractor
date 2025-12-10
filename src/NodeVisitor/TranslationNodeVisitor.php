@@ -18,7 +18,7 @@ use Twig\NodeVisitor\NodeVisitorInterface;
  */
 final class TranslationNodeVisitor implements NodeVisitorInterface
 {
-    public const UNDEFINED_DOMAIN = '_undefined';
+    public const UNDEFINED_DOMAIN = '';
 
     private bool $enabled = false;
     private array $messages = [];

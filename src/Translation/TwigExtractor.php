@@ -2,7 +2,7 @@
 
 namespace Drupal\itk_translation_extractor\Translation;
 
-use Drupal\itk_translation_extractor\NodeVisitor\TranslationNodeVisitor;
+use Drupal\itk_translation_extractor\ItkTranslationExtractorTwigExtension;
 use Symfony\Bridge\Twig\Translation\TwigExtractor as BaseTwigExtractor;
 use Symfony\Component\Translation\MessageCatalogue;
 use Twig\Environment;
@@ -28,21 +28,10 @@ class TwigExtractor extends BaseTwigExtractor
 
     protected function extractTemplate(string $template, MessageCatalogue $catalogue): void
     {
-        $visitor = null;
-        foreach ($this->twig->getNodeVisitors() as $v) {
-            if ($v instanceof TranslationNodeVisitor) {
-                $visitor = $v;
-                break;
-            }
-        }
-        if (null === $visitor) {
-            return;
-        }
+        $visitor = $this->twig->getExtension(ItkTranslationExtractorTwigExtension::class)->getTranslationNodeVisitor();
 
         $visitor->enable();
-
         $this->twig->parse($this->twig->tokenize(new Source($template, '')));
-
         foreach ($visitor->getMessages() as $message) {
             $catalogue->set(trim($message[0]), $this->prefix.trim($message[0]), $message[1] ?: $this->defaultDomain);
         }

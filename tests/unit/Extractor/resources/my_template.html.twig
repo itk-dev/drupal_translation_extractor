@@ -1,1 +1,21 @@
-{{ 'My button'|trans }}&#10{{ 'Another button'|t }}&#10&#10{{ 'My button'|trans(options: {context: 'The context'}) }}&#10{{ 'My button'|trans({}, {context: 'The context'}) }}&#10
+{{ 'trans filter'|trans }}
+{{ 't filter'|t }}
+
+{{ 'trans filter with options context'|trans(options: {context: 'the context'}) }}
+{{ 'trans filter with context'|trans({}, {context: 'another context'}) }}
+
+{# https://www.drupal.org/docs/8/api/translation-api/overview#s-translation-in-twig-templates #}
+
+{% trans %}Hello {{username}}.{% endtrans %}
+
+{% set count = 1 %}
+{% trans %}
+  Hello star.
+{% plural count %}
+  Hello {{ count }} stars.
+{% endtrans %}
+
+{% trans with {'context': 'Long month name', 'langcode': 'hu'} %}
+  May
+{% endtrans %}
+{% trans 'May' with {'context': 'Long month name', 'langcode': 'hu'} %}
