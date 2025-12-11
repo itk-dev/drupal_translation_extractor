@@ -95,7 +95,7 @@ final class TranslationNodeVisitor implements NodeVisitorInterface
                     $this->messages[] = [
                         $body->getAttribute('data'),
                         $node->hasNode('options') ? $this->getReadDomainFromNode($node->getNode('options')) : Helper::UNDEFINED_DOMAIN,
-                        ['plurals' => [$singular, $plural]],
+                        [Helper::METADATA_EXTRACTED_PLURALS => [$singular, $plural]],
                     ];
                 } else {
                     $this->messages[] = [

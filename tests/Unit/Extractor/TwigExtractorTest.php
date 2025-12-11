@@ -52,8 +52,8 @@ final class TwigExtractorTest extends TestCase
         $this->assertContains(Helper::UNDEFINED_DOMAIN, $domains);
         $metadata = $messages->getMetadata('Hello star.', Helper::UNDEFINED_DOMAIN);
         $this->assertIsArray($metadata);
-        $this->assertArrayHasKey('plurals', $metadata);
-        $this->assertCount(2, $metadata['plurals']);
+        $this->assertArrayHasKey(Helper::METADATA_EXTRACTED_PLURALS, $metadata);
+        $this->assertCount(2, $metadata[Helper::METADATA_EXTRACTED_PLURALS]);
     }
 
     private function twig(): Environment

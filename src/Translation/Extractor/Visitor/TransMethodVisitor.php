@@ -58,7 +58,7 @@ final class TransMethodVisitor extends AbstractVisitor
 
             foreach ($singular as $index => $message) {
                 $this->addMessageToCatalogue($message, $context, $node->getStartLine());
-                $this->addMetadataToCatalogue($message, ['plurals' => [$message, $plural[$index]]], $context);
+                $this->addMetadataToCatalogue($message, [Helper::METADATA_EXTRACTED_PLURALS => [$message, $plural[$index]]], $context);
             }
         }
 

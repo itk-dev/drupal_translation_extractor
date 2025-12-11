@@ -5,10 +5,11 @@ namespace Drupal\itk_translation_extractor\Translation;
 class Helper
 {
     public const string UNDEFINED_DOMAIN = '__no_context__';
+    public const string METADATA_EXTRACTED_PLURALS = 'extracted_plurals';
 
     public static function getContext(?string $domain): string
     {
-        return null === $domain || self::UNDEFINED_DOMAIN === $domain ? '' : $domain;
+        return (null === $domain || self::UNDEFINED_DOMAIN === $domain) ? '' : $domain;
     }
 
     public static function getLanguageName(string $langcode): ?string

@@ -59,7 +59,7 @@ class PoFileDumper extends BasePoFileDumper
                 $metadata = $messages->getMetadata($source, $domain);
                 $item = new PoItem();
                 $item->setContext(Helper::getContext($domain));
-                if ($plurals = ($metadata['plurals'] ?? null)) {
+                if ($plurals = ($metadata[Helper::METADATA_EXTRACTED_PLURALS] ?? null)) {
                     $item->setPlural(true);
                     $item->setSource($plurals);
                     $item->setTranslation(array_map(static fn (int $index) => '@todo '.$index, range(0, $numberOfPlurals - 1)));
