@@ -62,7 +62,7 @@ class PoFileDumper extends BasePoFileDumper
                 if ($plurals = ($metadata['plurals'] ?? null)) {
                     $item->setPlural(true);
                     $item->setSource($plurals);
-                    $item->setTranslation($plurals);
+                    $item->setTranslation(array_map(static fn (int $index) => '@todo '.$index, range(0, $numberOfPlurals - 1)));
                 } else {
                     $item->setSource($source);
                     $item->setTranslation($translation);

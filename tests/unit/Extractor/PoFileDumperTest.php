@@ -16,7 +16,7 @@ use Twig\Loader\FilesystemLoader;
 
 final class PoFileDumperTest extends TestCase
 {
-    public function testFormatCatalog(): void
+    public function testFormatCatalogDa(): void
     {
         $resource = __DIR__.'/resources/';
         $locale = 'da';
@@ -25,32 +25,76 @@ final class PoFileDumperTest extends TestCase
         $messages = new MessageCatalogue($locale);
         $extractor->extract($resource, $messages);
 
-        $outputPath = tempnam(sys_get_temp_dir(), 'po_');
         $dumper = new PoFileDumper();
         $output = $dumper->formatCatalogue($messages, '', [
-            'path' => dirname($outputPath),
-            'output_name' => basename($outputPath),
             'project_name' => 'testFormatCatalog',
         ]);
 
         $strings = [
-            '"Plural-Forms: nplurals=2; plural=(n != 1);\n"',
-            '"Language: da\n"',
-            join("\n", [
+            $this->line('# Danish translation of testFormatCatalog'),
+            $this->line('"Plural-Forms: nplurals=2; plural=(n != 1);\n"'),
+            $this->line('"Language: da\n"'),
+            $this->block([
                 'msgctxt "the context"',
                 'msgid "t filter with options context"',
                 'msgstr "t filter with options context"',
             ]),
-            join("\n", [
+            $this->block([
                 'msgid "Hello star."',
                 'msgid_plural "Hello @count stars."',
-                'msgstr[0] "Hello star."',
-                'msgstr[1] "Hello @count stars."',
+                'msgstr[0] "@todo 0"',
+                'msgstr[1] "@todo 1"',
             ]),
         ];
         foreach ($strings as $string) {
             $this->assertStringContainsString($string, $output);
         }
+    }
+
+    public function testFormatCatalogPl(): void
+    {
+        $resource = __DIR__.'/resources/';
+        $locale = 'pl';
+
+        $extractor = new TwigExtractor($this->twig());
+        $messages = new MessageCatalogue($locale);
+        $extractor->extract($resource, $messages);
+
+        $dumper = new PoFileDumper();
+        $output = $dumper->formatCatalogue($messages, '', [
+            'project_name' => 'testFormatCatalog',
+        ]);
+
+        $strings = [
+            $this->line('# Polish translation of testFormatCatalog'),
+            $this->line('"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"'),
+            $this->line('"Language: pl\n"'),
+            $this->block([
+                'msgctxt "the context"',
+                'msgid "t filter with options context"',
+                'msgstr "t filter with options context"',
+            ]),
+            $this->block([
+                'msgid "Hello star."',
+                'msgid_plural "Hello @count stars."',
+                'msgstr[0] "@todo 0"',
+                'msgstr[1] "@todo 1"',
+                'msgstr[2] "@todo 2"',
+            ]),
+        ];
+        foreach ($strings as $string) {
+            $this->assertStringContainsString($string, $output);
+        }
+    }
+
+    private function line(string $string): string
+    {
+        return $string."\n";
+    }
+
+    private function block(array $strings): string
+    {
+        return implode('', array_map($this->line(...), $strings))."\n";
     }
 
     private function twig(): Environment
