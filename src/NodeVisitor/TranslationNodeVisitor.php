@@ -4,6 +4,7 @@ namespace Drupal\itk_translation_extractor\NodeVisitor;
 
 use Drupal\Core\Template\TwigNodeTrans;
 use Drupal\Core\Template\TwigNodeTrans as TransNode;
+use Drupal\itk_translation_extractor\Translation\Helper;
 use Twig\Environment;
 use Twig\Error\SyntaxError;
 use Twig\Node\CheckToStringNode;
@@ -28,8 +29,6 @@ use Twig\NodeVisitor\NodeVisitorInterface;
  */
 final class TranslationNodeVisitor implements NodeVisitorInterface
 {
-    public const UNDEFINED_DOMAIN = '';
-
     private bool $enabled = false;
     private array $messages = [];
 
@@ -86,7 +85,7 @@ final class TranslationNodeVisitor implements NodeVisitorInterface
                 // {% trans '…' %}
                 $this->messages[] = [
                     $this->getConcatValueFromNode($body, ''),
-                    $node->hasNode('options') ? $this->getReadDomainFromNode($node->getNode('options')) : null,
+                    $node->hasNode('options') ? $this->getReadDomainFromNode($node->getNode('options')) : Helper::UNDEFINED_DOMAIN,
                 ];
             } else {
                 // {% trans %}…{% endtrans %}
@@ -95,13 +94,13 @@ final class TranslationNodeVisitor implements NodeVisitorInterface
                     $plural = $this->getStringValue($node->getNode('plural'));
                     $this->messages[] = [
                         $body->getAttribute('data'),
-                        $node->hasNode('options') ? $this->getReadDomainFromNode($node->getNode('options')) : null,
+                        $node->hasNode('options') ? $this->getReadDomainFromNode($node->getNode('options')) : Helper::UNDEFINED_DOMAIN,
                         ['plurals' => [$singular, $plural]],
                     ];
                 } else {
                     $this->messages[] = [
                         $body->getAttribute('data'),
-                        $node->hasNode('options') ? $this->getReadDomainFromNode($node->getNode('options')) : null,
+                        $node->hasNode('options') ? $this->getReadDomainFromNode($node->getNode('options')) : Helper::UNDEFINED_DOMAIN,
                     ];
                 }
             }
@@ -152,31 +151,31 @@ final class TranslationNodeVisitor implements NodeVisitorInterface
         return null;
     }
 
-    private function getReadDomainFromArguments(Node $arguments, int $index): ?string
+    private function getReadDomainFromArguments(Node $arguments, int $index): string
     {
         if ($arguments->hasNode('options')) {
             $argument = $arguments->getNode('options');
         } elseif ($arguments->hasNode($index)) {
             $argument = $arguments->getNode($index);
         } else {
-            return null;
+            return Helper::UNDEFINED_DOMAIN;
         }
 
         return $this->getReadDomainFromNode($argument);
     }
 
-    private function getReadDomainFromNode(Node $node): ?string
+    private function getReadDomainFromNode(Node $node): string
     {
         if ($node instanceof ArrayExpression) {
             foreach ($node->getKeyValuePairs() as $pair) {
                 $key = $this->getConcatValueFromNode($pair['key'], '');
                 if ('context' === $key) {
-                    return $this->getConcatValueFromNode($pair['value'], '');
+                    return $this->getConcatValueFromNode($pair['value'], '') ?: Helper::UNDEFINED_DOMAIN;
                 }
             }
         }
 
-        return self::UNDEFINED_DOMAIN;
+        return Helper::UNDEFINED_DOMAIN;
     }
 
     private function getConcatValueFromNode(Node $node, ?string $value): ?string

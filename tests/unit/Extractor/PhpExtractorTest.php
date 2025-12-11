@@ -7,6 +7,7 @@ namespace Drupal\itk_translation_extractor\Test\unit\Extractor;
 use Drupal\itk_translation_extractor\Translation\Extractor\PhpExtractor;
 use Drupal\itk_translation_extractor\Translation\Extractor\Visitor\TranslatableMarkupVisitor;
 use Drupal\itk_translation_extractor\Translation\Extractor\Visitor\TransMethodVisitor;
+use Drupal\itk_translation_extractor\Translation\Helper;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Translation\MessageCatalogue;
 
@@ -28,12 +29,12 @@ final class PhpExtractorTest extends TestCase
         $domains = $messages->getDomains();
 
         $this->assertCount(3, $domains);
-        $this->assertContains('', $domains);
-        $this->assertContains('the context', $domains);
-        $this->assertContains('another context', $domains);
-        $this->assertCount(3, $messages->all(''));
+        $this->assertContains(Helper::UNDEFINED_DOMAIN, $domains);
+        $this->assertCount(3, $messages->all(Helper::UNDEFINED_DOMAIN));
         $this->assertCount(3, $messages->all('the context'));
+        $this->assertContains('the context', $domains);
         $this->assertCount(3, $messages->all('another context'));
+        $this->assertContains('another context', $domains);
     }
 
     public function testTranslatableMarkup(): void
@@ -53,11 +54,11 @@ final class PhpExtractorTest extends TestCase
         $domains = $messages->getDomains();
 
         $this->assertCount(3, $domains);
-        $this->assertContains('', $domains);
+        $this->assertContains(Helper::UNDEFINED_DOMAIN, $domains);
+        $this->assertCount(1, $messages->all(Helper::UNDEFINED_DOMAIN));
         $this->assertContains('the context', $domains);
-        $this->assertContains('another context', $domains);
-        $this->assertCount(1, $messages->all(''));
         $this->assertCount(1, $messages->all('the context'));
+        $this->assertContains('another context', $domains);
         $this->assertCount(1, $messages->all('another context'));
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Drupal\itk_translation_extractor\Translation\Extractor\Visitor;
 
+use Drupal\itk_translation_extractor\Translation\Helper;
 use PhpParser\Node;
 use PhpParser\NodeVisitor;
 use Symfony\Component\Translation\Extractor\Visitor\AbstractVisitor;
@@ -44,13 +45,13 @@ final class TransMethodVisitor extends AbstractVisitor implements NodeVisitor
                 return null;
             }
 
-            $context = '';
+            $context = null;
             if ($options = $this->getArrayArgument($node, 2 < $firstNamedArgumentIndex ? 2 : 'options')) {
-                $context = $this->getArrayStringValue($options, 'context') ?? '';
+                $context = $this->getArrayStringValue($options, 'context');
             }
 
             foreach ($messages as $message) {
-                $this->addMessageToCatalogue($message, $context, $node->getStartLine());
+                $this->addMessageToCatalogue($message, $context ?? Helper::UNDEFINED_DOMAIN, $node->getStartLine());
             }
         }
 

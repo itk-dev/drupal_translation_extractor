@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Drupal\itk_translation_extractor\Command;
 
 use Drupal\Core\Extension\ExtensionPathResolver;
-use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\itk_translation_extractor\Translation\Dumper\PoFileDumper;
+use Drupal\itk_translation_extractor\Translation\Helper;
 use Drupal\itk_translation_extractor\Translation\TwigExtractor;
+use Drupal\locale\StringStorageInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -18,10 +19,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Translation\Catalogue\MergeOperation;
 use Symfony\Component\Translation\Catalogue\TargetOperation;
-use Symfony\Component\Translation\Loader\PoFileLoader;
 use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\MessageCatalogueInterface;
-use Symfony\Component\Translation\Reader\TranslationReader;
 use Symfony\Component\Translation\Writer\TranslationWriter;
 use Twig\Environment;
 
@@ -57,27 +56,17 @@ final class TranslationExtractCommand extends Command
      */
     private TwigExtractor $extractor;
 
-    /**
-     * The reader.
-     */
-    private TranslationReader $reader;
-
     public function __construct(
-        // #[Autowire(service: 'twig')]
         private readonly Environment $twig,
         private readonly ExtensionPathResolver $extensionPathResolver,
         private readonly LanguageManagerInterface $languageManager,
-        FileSystemInterface $fileSystem,
+        private readonly StringStorageInterface $stringStorage,
+        PoFileDumper $poFileDumper,
     ) {
         $this->extractor = new TwigExtractor($this->twig);
 
-        $this->reader = new TranslationReader();
-        $this->reader->addLoader('po', new PoFileLoader());
-
         $this->writer = new TranslationWriter();
-        $this->writer->addDumper('po', new PoFileDumper(
-            fileSystem: $fileSystem,
-        ));
+        $this->writer->addDumper('po', $poFileDumper);
 
         parent::__construct();
     }
@@ -212,7 +201,7 @@ EOF
         // $currentCatalogue = $this->loadCurrentMessages($input->getArgument('locale'), $transPaths);
 
         $io->comment('Loading translated messages...');
-        $currentCatalogue = $this->loadTranslatedMessages($input->getArgument('locale'), $extractedCatalogue);
+        $currentCatalogue = $this->loadTranslatedMessages($extractedCatalogue);
 
         // if (null !== $domain = $input->getOption('domain')) {
         //   $currentCatalogue = $this->filterCatalogue($currentCatalogue, $domain);
@@ -447,22 +436,28 @@ EOF
         return $filteredPaths;
     }
 
-    private function loadTranslatedMessages(string $locale, MessageCatalogue $extractedCatalogue)
+    private function loadTranslatedMessages(MessageCatalogue $extractedCatalogue)
     {
-        $currentCatalogue = new MessageCatalogue($locale);
+        $currentCatalogue = new MessageCatalogue($extractedCatalogue->getLocale());
 
-        return $currentCatalogue;
-    }
-
-    private function loadCurrentMessages(string $locale, array $transPaths): MessageCatalogue
-    {
-        // @todo Load existing translations from database.
-        $currentCatalogue = new MessageCatalogue($locale);
-        foreach ($transPaths as $path) {
-            if (is_dir($path)) {
-                $this->reader->read($path, $currentCatalogue);
+        foreach ($extractedCatalogue->getDomains() as $domain) {
+            $translations = $this->stringStorage->getTranslations([
+                'language' => $currentCatalogue->getLocale(),
+                'context' => Helper::getContext($domain),
+            ]);
+            // Index by source
+            $translations = array_column($translations, null, 'source');
+            foreach ($extractedCatalogue->all($domain) as $source => $_) {
+                if ($translation = ($translations[$source] ?? null)) {
+                    if ($string = $translation->getString()) {
+                        $currentCatalogue->set($source, $string, $domain);
+                        $currentCatalogue->setMetadata($source, ['plurals' => $translation->getPlurals()], $domain);
+                    }
+                }
             }
         }
+
+        // Load from database
 
         return $currentCatalogue;
     }

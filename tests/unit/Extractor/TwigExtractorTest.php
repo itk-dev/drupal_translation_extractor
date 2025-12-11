@@ -6,6 +6,7 @@ namespace Drupal\itk_translation_extractor\Test\unit\Extractor;
 
 use Drupal\Core\Template\TwigTransTokenParser;
 use Drupal\itk_translation_extractor\ItkTranslationExtractorTwigExtension;
+use Drupal\itk_translation_extractor\Translation\Helper;
 use Drupal\itk_translation_extractor\Translation\TwigExtractor;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Translation\MessageCatalogue;
@@ -28,12 +29,12 @@ final class TwigExtractorTest extends TestCase
         $domains = $messages->getDomains();
 
         $this->assertCount(3, $domains);
-        $this->assertContains('', $domains);
-        $this->assertContains('the context', $domains);
-        $this->assertContains('another context', $domains);
-        $this->assertCount(3, $messages->all(''));
+        $this->assertContains(Helper::UNDEFINED_DOMAIN, $domains);
+        $this->assertCount(3, $messages->all(Helper::UNDEFINED_DOMAIN));
         $this->assertCount(3, $messages->all('the context'));
+        $this->assertContains('the context', $domains);
         $this->assertCount(2, $messages->all('another context'));
+        $this->assertContains('another context', $domains);
     }
 
     public function testDrupalTransMethod(): void
@@ -47,14 +48,8 @@ final class TwigExtractorTest extends TestCase
         $extractor->extract($resource, $messages);
 
         $domains = $messages->getDomains();
-
-        $this->assertCount(3, $domains);
-        $this->assertContains('', $domains);
-        $this->assertContains('the context', $domains);
-        $this->assertContains('another context', $domains);
-        $this->assertCount(3, $messages->all(''));
-        $this->assertCount(3, $messages->all('the context'));
-        $this->assertCount(2, $messages->all('another context'));
+        $this->assertCount(1, $domains);
+        $this->assertContains(Helper::UNDEFINED_DOMAIN, $domains);
     }
 
     private function twig(): Environment

@@ -2,9 +2,9 @@
 
 namespace Drupal\itk_translation_extractor\Translation\Dumper;
 
-use Drupal\Component\Gettext\PoHeader;
 use Drupal\Component\Gettext\PoItem;
 use Drupal\Component\Gettext\PoStreamWriter;
+use Drupal\itk_translation_extractor\Translation\Helper;
 use Symfony\Component\Translation\Dumper\PoFileDumper as BasePoFileDumper;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Component\Translation\MessageCatalogue;
@@ -33,22 +33,23 @@ class PoFileDumper extends BasePoFileDumper
         string $domain,
         array $options = [],
     ): string {
-        $header = new PoHeader();
-        // Set Plural-Forms
-        $spec = '';
-        switch ($messages->getLocale()) {
-            case 'da':
-                $spec = 'Plural-Forms: nplurals=2; plural=(n != 1);';
+        $locale = $messages->getLocale();
+        $pluralForm = Helper::getPluralForm($locale);
+        if (null === $pluralForm) {
+            throw new InvalidArgumentException(sprintf('Invalid locale: %s', $locale));
         }
-        $header->setFromString($spec);
-        if ($languageName = ($options['language_name'] ?? null)) {
+        $numberOfPlurals = Helper::getNumberOfPlurals($locale);
+
+        $header = new PoHeader($locale);
+        $header->setPluralForms($pluralForm);
+        if ($languageName = Helper::getLanguageName($locale)) {
             $header->setLanguageName($languageName);
         }
         if ($projectName = ($options['project_name'] ?? null)) {
             $header->setProjectName($projectName);
         }
-        $uri = tempnam(sys_get_temp_dir(), 'po_');
 
+        $uri = tempnam(sys_get_temp_dir(), 'po_');
         $writer = new PoStreamWriter();
         $writer->setURI($uri);
         $writer->setHeader($header);
@@ -56,15 +57,11 @@ class PoFileDumper extends BasePoFileDumper
         foreach ($messages->getDomains() as $domain) {
             foreach ($messages->all($domain) as $source => $translation) {
                 $metadata = $messages->getMetadata($source, $domain);
-                // MessageCatalog has a special case for the empty domain.
-                if ('' === $domain) {
-                    $metadata = $metadata[$domain][$source] ?? null;
-                }
                 $item = new PoItem();
+                $item->setContext(Helper::getContext($domain));
                 if ($plurals = ($metadata['plurals'] ?? null)) {
                     $item->setPlural(true);
                     $item->setSource($plurals);
-                    // @todo!!!
                     $item->setTranslation($plurals);
                 } else {
                     $item->setSource($source);

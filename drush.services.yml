@@ -5,6 +5,7 @@ services:
       - "@twig"
       - "@extension.path.resolver"
       - "@language_manager"
-      - "@file_system"
+      - "@locale.storage"
+      - "@Drupal\\itk_translation_extractor\\Translation\\Dumper\\PoFileDumper"
     tags:
       - { name: console.command }

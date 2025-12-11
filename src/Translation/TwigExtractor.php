@@ -11,11 +11,6 @@ use Twig\Source;
 class TwigExtractor extends BaseTwigExtractor
 {
     /**
-     * Default domain for found messages.
-     */
-    private string $defaultDomain = '';
-
-    /**
      * Prefix for found message.
      */
     private string $prefix = '';
@@ -35,7 +30,7 @@ class TwigExtractor extends BaseTwigExtractor
         foreach ($visitor->getMessages() as $message) {
             $id = trim($message[0]);
             $translation = $this->prefix.trim($message[0]);
-            $domain = $message[1] ?: $this->defaultDomain;
+            $domain = $message[1] ?: Helper::UNDEFINED_DOMAIN;
             $catalogue->set($id, $translation, $domain);
             if ($metadata = ($message[2] ?? null)) {
                 $catalogue->setMetadata($id, $metadata, $domain);

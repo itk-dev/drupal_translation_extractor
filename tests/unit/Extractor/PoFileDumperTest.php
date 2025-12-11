@@ -9,7 +9,6 @@ use Drupal\itk_translation_extractor\ItkTranslationExtractorTwigExtension;
 use Drupal\itk_translation_extractor\Translation\Dumper\PoFileDumper;
 use Drupal\itk_translation_extractor\Translation\TwigExtractor;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Translation\Loader\PoFileLoader;
 use Symfony\Component\Translation\MessageCatalogue;
 use Twig;
 use Twig\Environment;
@@ -17,25 +16,41 @@ use Twig\Loader\FilesystemLoader;
 
 final class PoFileDumperTest extends TestCase
 {
-    public function testTransMethod(): void
+    public function testFormatCatalog(): void
     {
-        $extractor = new TwigExtractor($this->twig());
         $resource = __DIR__.'/resources/';
         $locale = 'da';
+
+        $extractor = new TwigExtractor($this->twig());
         $messages = new MessageCatalogue($locale);
         $extractor->extract($resource, $messages);
 
         $outputPath = tempnam(sys_get_temp_dir(), 'po_');
         $dumper = new PoFileDumper();
-        $dumper->dump($messages, [
+        $output = $dumper->formatCatalogue($messages, '', [
             'path' => dirname($outputPath),
             'output_name' => basename($outputPath),
+            'project_name' => 'testFormatCatalog',
         ]);
 
-        //    $content = file_get_contents($outputPath);
-        $loader = new PoFileLoader();
-        $messages = $loader->load($outputPath, $locale, '');
-        // @todo
+        $strings = [
+            '"Plural-Forms: nplurals=2; plural=(n != 1);\n"',
+            '"Language: da\n"',
+            join("\n", [
+                'msgctxt "the context"',
+                'msgid "t filter with options context"',
+                'msgstr "t filter with options context"',
+            ]),
+            join("\n", [
+                'msgid "Hello star."',
+                'msgid_plural "Hello @count stars."',
+                'msgstr[0] "Hello star."',
+                'msgstr[1] "Hello @count stars."',
+            ]),
+        ];
+        foreach ($strings as $string) {
+            $this->assertStringContainsString($string, $output);
+        }
     }
 
     private function twig(): Environment
