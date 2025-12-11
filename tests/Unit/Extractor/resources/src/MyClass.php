@@ -11,7 +11,7 @@ class MyClass
 {
     use StringTranslationTrait;
 
-    public function __construct()
+    public function f(): void
     {
         t('Global t');
         t('Global t with context', [], ['context' => 'the context']);

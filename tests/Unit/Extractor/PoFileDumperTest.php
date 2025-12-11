@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\itk_translation_extractor\Test\unit\Extractor;
+namespace Drupal\itk_translation_extractor\Test\Unit\Extractor;
 
 use Drupal\Core\Template\TwigTransTokenParser;
 use Drupal\itk_translation_extractor\ItkTranslationExtractorTwigExtension;

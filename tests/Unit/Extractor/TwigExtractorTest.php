@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\itk_translation_extractor\Test\unit\Extractor;
+namespace Drupal\itk_translation_extractor\Test\Unit\Extractor;
 
 use Drupal\Core\Template\TwigTransTokenParser;
 use Drupal\itk_translation_extractor\ItkTranslationExtractorTwigExtension;
@@ -20,7 +20,7 @@ final class TwigExtractorTest extends TestCase
     {
         $extractor = new TwigExtractor($this->twig());
         $resource = [
-            __DIR__.'/resources/my_template.html.twig',
+            __DIR__.'/resources/templates/my_template.html.twig',
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
@@ -41,7 +41,7 @@ final class TwigExtractorTest extends TestCase
     {
         $extractor = new TwigExtractor($this->twig());
         $resource = [
-            __DIR__.'/resources/drupal.html.twig',
+            __DIR__.'/resources/templates/my_template_drupal.html.twig',
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
@@ -50,6 +50,10 @@ final class TwigExtractorTest extends TestCase
         $domains = $messages->getDomains();
         $this->assertCount(1, $domains);
         $this->assertContains(Helper::UNDEFINED_DOMAIN, $domains);
+        $metadata = $messages->getMetadata('Hello star.', Helper::UNDEFINED_DOMAIN);
+        $this->assertIsArray($metadata);
+        $this->assertArrayHasKey('plurals', $metadata);
+        $this->assertCount(2, $metadata['plurals']);
     }
 
     private function twig(): Environment

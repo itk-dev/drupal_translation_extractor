@@ -4,28 +4,14 @@ namespace Drupal\itk_translation_extractor\Translation\Extractor\Visitor;
 
 use Drupal\itk_translation_extractor\Translation\Helper;
 use PhpParser\Node;
-use PhpParser\NodeVisitor;
-use Symfony\Component\Translation\Extractor\Visitor\AbstractVisitor;
 
 /**
  * Lifted from \Symfony\Component\Translation\Extractor\Visitor\TransMethodVisitor.
  *
  * @see \Symfony\Component\Translation\Extractor\Visitor\TransMethodVisitor.
  */
-final class TransMethodVisitor extends AbstractVisitor implements NodeVisitor
+final class TransMethodVisitor extends AbstractVisitor
 {
-    use ArrayValueTrait;
-
-    public function beforeTraverse(array $nodes): ?Node
-    {
-        return null;
-    }
-
-    public function enterNode(Node $node): ?Node
-    {
-        return null;
-    }
-
     public function leaveNode(Node $node): ?Node
     {
         if (!$node instanceof Node\Expr\MethodCall && !$node instanceof Node\Expr\FuncCall) {
@@ -53,13 +39,29 @@ final class TransMethodVisitor extends AbstractVisitor implements NodeVisitor
             foreach ($messages as $message) {
                 $this->addMessageToCatalogue($message, $context ?? Helper::UNDEFINED_DOMAIN, $node->getStartLine());
             }
+        } elseif ('formatPlural' === $name) {
+            // https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21StringTranslation%21TranslationInterface.php/function/TranslationInterface%3A%3AformatPlural/11.x
+            $firstNamedArgumentIndex = $this->nodeFirstNamedArgumentIndex($node);
+
+            if (!$singular = $this->getStringArguments($node, 1 < $firstNamedArgumentIndex ? 1 : 'singular')) {
+                return null;
+            }
+            if (!$plural = $this->getStringArguments($node, 2 < $firstNamedArgumentIndex ? 2 : 'plural')) {
+                return null;
+            }
+
+            $context = null;
+            if ($options = $this->getArrayArgument($node, 4 < $firstNamedArgumentIndex ? 4 : 'options')) {
+                $context = $this->getArrayStringValue($options, 'context');
+            }
+            $context ??= Helper::UNDEFINED_DOMAIN;
+
+            foreach ($singular as $index => $message) {
+                $this->addMessageToCatalogue($message, $context, $node->getStartLine());
+                $this->addMetadataToCatalogue($message, ['plurals' => [$message, $plural[$index]]], $context);
+            }
         }
 
-        return null;
-    }
-
-    public function afterTraverse(array $nodes): ?Node
-    {
         return null;
     }
 }
