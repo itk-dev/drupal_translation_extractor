@@ -83,7 +83,7 @@ final class TranslationExtractCommand extends Command
               new InputOption('dump-messages', null, InputOption::VALUE_NONE, 'Should the messages be dumped in the console'),
               new InputOption('force', null, InputOption::VALUE_NONE, 'Should the extract be done'),
               new InputOption('clean', null, InputOption::VALUE_NONE, 'Should clean not found messages'),
-              // new InputOption('domain', null, InputOption::VALUE_REQUIRED, 'Specify the domain to extract'),
+              new InputOption('domain', null, InputOption::VALUE_REQUIRED, 'Specify the domain to extract'),
               new InputOption('sort', null, InputOption::VALUE_REQUIRED, 'Return list of messages sorted alphabetically'),
               new InputOption('as-tree', null, InputOption::VALUE_REQUIRED, 'Dump the messages as a tree-like structure: The given value defines the level where to switch to inline YAML'),
 
@@ -201,12 +201,17 @@ EOF
         // $currentCatalogue = $this->loadCurrentMessages($input->getArgument('locale'), $transPaths);
 
         $io->comment('Loading translated messages...');
-        $currentCatalogue = $this->loadTranslatedMessages($extractedCatalogue);
+        $currentCatalogue = true === $input->getOption('no-fill')
+          ? $extractedCatalogue
+          : $this->loadTranslatedMessages($extractedCatalogue);
 
-        // if (null !== $domain = $input->getOption('domain')) {
-        //   $currentCatalogue = $this->filterCatalogue($currentCatalogue, $domain);
-        //   $extractedCatalogue = $this->filterCatalogue($extractedCatalogue, $domain);
-        // }
+        if (null !== $domain = $input->getOption('domain')) {
+            if ('' === $domain) {
+                $domain = PoItem::NO_CONTEXT;
+            }
+            $currentCatalogue = $this->filterCatalogue($currentCatalogue, $domain);
+            $extractedCatalogue = $this->filterCatalogue($extractedCatalogue, $domain);
+        }
 
         // process catalogues
         $operation = $input->getOption('clean')
@@ -451,7 +456,6 @@ EOF
                 if ($translation = ($translations[$source] ?? null)) {
                     if ($string = $translation->getString()) {
                         $currentCatalogue->set($source, $string, $domain);
-                        $currentCatalogue->setMetadata($source, ['plurals' => $translation->getPlurals()], $domain);
                     }
                 }
             }

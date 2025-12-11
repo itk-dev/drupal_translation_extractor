@@ -51,6 +51,39 @@ final class PoFileDumperTest extends TestCase
         }
     }
 
+    public function testFormatCatalogDaWithPrefix(): void
+    {
+        $resource = __DIR__.'/resources/';
+        $locale = 'da';
+
+        $extractor = new TwigExtractor($this->twig());
+        $messages = new MessageCatalogue($locale);
+        $extractor->setPrefix('__');
+        $extractor->extract($resource, $messages);
+
+        $dumper = new PoFileDumper();
+        $output = $dumper->formatCatalogue($messages, '', [
+            'project_name' => 'testFormatCatalog',
+        ]);
+
+        $strings = [
+            $this->block([
+                'msgctxt "the context"',
+                'msgid "t filter with options context"',
+                'msgstr "__t filter with options context"',
+            ]),
+            $this->block([
+                'msgid "Hello star."',
+                'msgid_plural "Hello @count stars."',
+                'msgstr[0] "__Hello star."',
+                'msgstr[1] "__Hello @count stars."',
+            ]),
+        ];
+        foreach ($strings as $string) {
+            $this->assertStringContainsString($string, $output);
+        }
+    }
+
     public function testFormatCatalogPl(): void
     {
         $resource = __DIR__.'/resources/';
