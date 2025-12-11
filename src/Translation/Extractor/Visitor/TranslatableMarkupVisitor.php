@@ -2,7 +2,7 @@
 
 namespace Drupal\itk_translation_extractor\Translation\Extractor\Visitor;
 
-use Drupal\itk_translation_extractor\Translation\Helper;
+use Drupal\itk_translation_extractor\Translation\Dumper\PoItem;
 use PhpParser\Node;
 use PhpParser\NodeVisitor;
 
@@ -26,7 +26,7 @@ final class TranslatableMarkupVisitor extends AbstractVisitor implements NodeVis
         if (\in_array('TranslatableMarkup', $className->getParts(), true)) {
             $firstNamedArgumentIndex = $this->nodeFirstNamedArgumentIndex($node);
 
-            if (!$messages = $this->getStringArguments($node, 0 < $firstNamedArgumentIndex ? 0 : 'string')) {
+            if (!$string = $this->getStringArgument($node, 0 < $firstNamedArgumentIndex ? 0 : 'string')) {
                 return null;
             }
 
@@ -35,18 +35,16 @@ final class TranslatableMarkupVisitor extends AbstractVisitor implements NodeVis
                 $context = $this->getArrayStringValue($options, 'context');
             }
 
-            foreach ($messages as $message) {
-                $this->addMessageToCatalogue($message, $context ?? Helper::UNDEFINED_DOMAIN, $node->getStartLine());
-            }
+            $this->addMessageToCatalogue($string, $context ?? PoItem::NO_CONTEXT, $node->getStartLine());
         }
 
         if (\in_array('PluralTranslatableMarkup', $className->getParts(), true)) {
             $firstNamedArgumentIndex = $this->nodeFirstNamedArgumentIndex($node);
 
-            if (!$singular = $this->getStringArguments($node, 1 < $firstNamedArgumentIndex ? 1 : 'singular')) {
+            if (!$singular = $this->getStringArgument($node, 1 < $firstNamedArgumentIndex ? 1 : 'singular')) {
                 return null;
             }
-            if (!$plural = $this->getStringArguments($node, 2 < $firstNamedArgumentIndex ? 2 : 'plural')) {
+            if (!$plural = $this->getStringArgument($node, 2 < $firstNamedArgumentIndex ? 2 : 'plural')) {
                 return null;
             }
 
@@ -54,12 +52,9 @@ final class TranslatableMarkupVisitor extends AbstractVisitor implements NodeVis
             if ($options = $this->getArrayArgument($node, 4 < $firstNamedArgumentIndex ? 4 : 'options')) {
                 $context = $this->getArrayStringValue($options, 'context');
             }
-            $context ??= Helper::UNDEFINED_DOMAIN;
+            $context ??= PoItem::NO_CONTEXT;
 
-            foreach ($singular as $index => $message) {
-                $this->addMessageToCatalogue($message, $context, $node->getStartLine());
-                $this->addMetadataToCatalogue($message, [Helper::METADATA_EXTRACTED_PLURALS => [$message, $plural[$index]]], $context);
-            }
+            $this->addMessageToCatalogue(PoItem::joinStrings($singular, $plural), $context, $node->getStartLine());
         }
 
         return null;

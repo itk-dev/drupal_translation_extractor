@@ -5,27 +5,10 @@ namespace Drupal\itk_translation_extractor\Translation\Extractor\Visitor;
 use PhpParser\Node;
 use PhpParser\NodeVisitor;
 use Symfony\Component\Translation\Extractor\Visitor\AbstractVisitor as BaseAbstractVisitor;
-use Symfony\Component\Translation\MessageCatalogue;
 
 abstract class AbstractVisitor extends BaseAbstractVisitor implements NodeVisitor
 {
     use ArrayValueTrait;
-
-    private MessageCatalogue $catalogue;
-
-    public function initialize(MessageCatalogue $catalogue, \SplFileInfo $file, string $messagePrefix): void
-    {
-        parent::initialize($catalogue, $file, $messagePrefix);
-        // Lift the private property from the parent.
-        $this->catalogue = $catalogue;
-    }
-
-    protected function addMetadataToCatalogue(string $message, array $values, string $domain = 'messages'): void
-    {
-        $metadata = $this->catalogue->getMetadata($message, $domain) ?? [];
-        $metadata += $values;
-        $this->catalogue->setMetadata($message, $metadata, $domain);
-    }
 
     public function beforeTraverse(array $nodes): ?Node
     {
@@ -88,5 +71,10 @@ abstract class AbstractVisitor extends BaseAbstractVisitor implements NodeVisito
         }
 
         return null;
+    }
+
+    protected function getStringArgument(Node\Expr\CallLike|Node\Attribute|Node\Expr\New_ $node, int|string $index, bool $indexIsRegex = false): ?string
+    {
+        return $this->getStringArguments($node, $index, $indexIsRegex)[0] ?? null;
     }
 }

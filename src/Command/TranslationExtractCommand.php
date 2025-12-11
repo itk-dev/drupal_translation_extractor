@@ -7,7 +7,7 @@ namespace Drupal\itk_translation_extractor\Command;
 use Drupal\Core\Extension\ExtensionPathResolver;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\itk_translation_extractor\Translation\Dumper\PoFileDumper;
-use Drupal\itk_translation_extractor\Translation\Helper;
+use Drupal\itk_translation_extractor\Translation\Dumper\PoItem;
 use Drupal\itk_translation_extractor\Translation\TwigExtractor;
 use Drupal\locale\StringStorageInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -443,7 +443,7 @@ EOF
         foreach ($extractedCatalogue->getDomains() as $domain) {
             $translations = $this->stringStorage->getTranslations([
                 'language' => $currentCatalogue->getLocale(),
-                'context' => Helper::getContext($domain),
+                'context' => PoItem::formatContext($domain),
             ]);
             // Index by source
             $translations = array_column($translations, null, 'source');

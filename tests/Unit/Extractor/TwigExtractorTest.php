@@ -6,7 +6,7 @@ namespace Drupal\itk_translation_extractor\Test\Unit\Extractor;
 
 use Drupal\Core\Template\TwigTransTokenParser;
 use Drupal\itk_translation_extractor\ItkTranslationExtractorTwigExtension;
-use Drupal\itk_translation_extractor\Translation\Helper;
+use Drupal\itk_translation_extractor\Translation\Dumper\PoItem;
 use Drupal\itk_translation_extractor\Translation\TwigExtractor;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Translation\MessageCatalogue;
@@ -29,8 +29,8 @@ final class TwigExtractorTest extends TestCase
         $domains = $messages->getDomains();
 
         $this->assertCount(3, $domains);
-        $this->assertContains(Helper::UNDEFINED_DOMAIN, $domains);
-        $this->assertCount(3, $messages->all(Helper::UNDEFINED_DOMAIN));
+        $this->assertContains(PoItem::NO_CONTEXT, $domains);
+        $this->assertCount(3, $messages->all(PoItem::NO_CONTEXT));
         $this->assertCount(3, $messages->all('the context'));
         $this->assertContains('the context', $domains);
         $this->assertCount(2, $messages->all('another context'));
@@ -49,11 +49,7 @@ final class TwigExtractorTest extends TestCase
 
         $domains = $messages->getDomains();
         $this->assertCount(1, $domains);
-        $this->assertContains(Helper::UNDEFINED_DOMAIN, $domains);
-        $metadata = $messages->getMetadata('Hello star.', Helper::UNDEFINED_DOMAIN);
-        $this->assertIsArray($metadata);
-        $this->assertArrayHasKey(Helper::METADATA_EXTRACTED_PLURALS, $metadata);
-        $this->assertCount(2, $metadata[Helper::METADATA_EXTRACTED_PLURALS]);
+        $this->assertContains(PoItem::NO_CONTEXT, $domains);
     }
 
     private function twig(): Environment

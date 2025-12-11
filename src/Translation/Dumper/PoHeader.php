@@ -2,19 +2,14 @@
 
 namespace Drupal\itk_translation_extractor\Translation\Dumper;
 
+use Drupal\itk_translation_extractor\Exception\InvalidArgumentException;
+
 class PoHeader extends \Drupal\Component\Gettext\PoHeader
 {
     public function __construct(string $langcode)
     {
         parent::__construct($langcode);
-    }
-
-    /**
-     * The parent's missing setter.
-     */
-    public function setPluralForms(string $pluralForms): void
-    {
-        $this->pluralForms = $pluralForms;
+        [$this->languageName, $this->pluralForms] = self::getLanguageInfo($langcode);
     }
 
     public function __toString()
@@ -25,4 +20,111 @@ class PoHeader extends \Drupal\Component\Gettext\PoHeader
 
         return $output;
     }
+
+    /**
+     * Get language info.
+     *
+     * @return array
+     *               Array with two values:
+     *               - string $languageName
+     *               - string $pluralForm
+     */
+    public static function getLanguageInfo(string $langcode): array
+    {
+        $item = self::PLURAL_TABLE[$langcode] ?? null;
+        if (null === $item) {
+            throw new InvalidArgumentException(sprintf('Invalid langcode: %s', $langcode));
+        }
+
+        return $item;
+    }
+
+    public function getNumberOfPlurals(): int
+    {
+        preg_match('/nplurals=(\d)+;/', (string) $this->pluralForms, $matches);
+
+        return (int) $matches[1] ?? 1;
+    }
+
+    // Lifted from
+    // https://gitweb.git.savannah.gnu.org/gitweb/?p=gettext.git;a=blob;f=gettext-tools/src/plural-table.c;h=be87373a0aa59ef1eb04b0b1dba43dbb330f1afb;hb=HEAD
+    // (found via
+    // https://git.drupalcode.org/project/potx/-/blob/8.x-1.x/potx.inc?ref_type=heads#L655).
+    private const array PLURAL_TABLE = [
+        'ja' => ['Japanese', 'nplurals=1; plural=0;'],
+        'vi' => ['Vietnamese', 'nplurals=1; plural=0;'],
+        'ko' => ['Korean', 'nplurals=1; plural=0;'],
+        'en' => ['English', 'nplurals=2; plural=(n != 1);'],
+        'de' => ['German', 'nplurals=2; plural=(n != 1);'],
+        'nl' => ['Dutch', 'nplurals=2; plural=(n != 1);'],
+        'sv' => ['Swedish', 'nplurals=2; plural=(n != 1);'],
+        'da' => ['Danish', 'nplurals=2; plural=(n != 1);'],
+        'no' => ['Norwegian', 'nplurals=2; plural=(n != 1);'],
+        'nb' => ['Norwegian Bokmal', 'nplurals=2; plural=(n != 1);'],
+        'nn' => ['Norwegian Nynorsk', 'nplurals=2; plural=(n != 1);'],
+        'fo' => ['Faroese', 'nplurals=2; plural=(n != 1);'],
+        'es' => ['Spanish', 'nplurals=2; plural=(n != 1);'],
+        'pt' => ['Portuguese', 'nplurals=2; plural=(n != 1);'],
+        'it' => ['Italian', 'nplurals=2; plural=(n != 1);'],
+        'bg' => ['Bulgarian', 'nplurals=2; plural=(n != 1);'],
+        'el' => ['Greek', 'nplurals=2; plural=(n != 1);'],
+        'fi' => ['Finnish', 'nplurals=2; plural=(n != 1);'],
+        'et' => ['Estonian', 'nplurals=2; plural=(n != 1);'],
+        'he' => ['Hebrew', 'nplurals=2; plural=(n != 1);'],
+        'eo' => ['Esperanto', 'nplurals=2; plural=(n != 1);'],
+        'hu' => ['Hungarian', 'nplurals=2; plural=(n != 1);'],
+        'tr' => ['Turkish', 'nplurals=2; plural=(n != 1);'],
+        'ca' => ['Catalan', 'nplurals=2; plural=(n != 1);'],
+        'pt_BR' => ['Brazilian', 'nplurals=2; plural=(n > 1);'],
+        'fr' => ['French', 'nplurals=2; plural=(n > 1);'],
+        'lv' => [
+            'Latvian',
+            'nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);',
+        ],
+        'ga' => ['Irish', 'nplurals=3; plural=n==1 ? 0 : n==2 ? 1 : 2;'],
+        'ro' => [
+            'Romanian',
+            'nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2;',
+        ],
+        'lt' => [
+            'Lithuanian',
+            'nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2);',
+        ],
+        'ru' => [
+            'Russian',
+            'nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);',
+        ],
+        'uk' => [
+            'Ukrainian',
+            'nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);',
+        ],
+        'be' => [
+            'Belarusian',
+            'nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);',
+        ],
+        'sr' => [
+            'Serbian',
+            'nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);',
+        ],
+        'hr' => [
+            'Croatian',
+            'nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);',
+        ],
+        'cs' => [
+            'Czech',
+            'nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;',
+        ],
+        'sk' => [
+            'Slovak',
+            'nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;',
+        ],
+        'pl' => [
+            'Polish',
+            'nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);',
+        ],
+        'sl' => [
+            'Slovenian',
+            'nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);',
+        ],
+    ];
 }

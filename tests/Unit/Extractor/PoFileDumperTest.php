@@ -42,8 +42,8 @@ final class PoFileDumperTest extends TestCase
             $this->block([
                 'msgid "Hello star."',
                 'msgid_plural "Hello @count stars."',
-                'msgstr[0] "@todo 0"',
-                'msgstr[1] "@todo 1"',
+                'msgstr[0] "Hello star."',
+                'msgstr[1] "Hello @count stars."',
             ]),
         ];
         foreach ($strings as $string) {
@@ -77,9 +77,9 @@ final class PoFileDumperTest extends TestCase
             $this->block([
                 'msgid "Hello star."',
                 'msgid_plural "Hello @count stars."',
-                'msgstr[0] "@todo 0"',
-                'msgstr[1] "@todo 1"',
-                'msgstr[2] "@todo 2"',
+                'msgstr[0] "Hello star."',
+                'msgstr[1] "Hello @count stars."',
+                'msgstr[2] ""',
             ]),
         ];
         foreach ($strings as $string) {

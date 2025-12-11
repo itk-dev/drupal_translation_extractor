@@ -2,9 +2,7 @@
 
 namespace Drupal\itk_translation_extractor\Translation\Dumper;
 
-use Drupal\Component\Gettext\PoItem;
 use Drupal\Component\Gettext\PoStreamWriter;
-use Drupal\itk_translation_extractor\Translation\Helper;
 use Symfony\Component\Translation\Dumper\PoFileDumper as BasePoFileDumper;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Component\Translation\MessageCatalogue;
@@ -34,17 +32,9 @@ class PoFileDumper extends BasePoFileDumper
         array $options = [],
     ): string {
         $locale = $messages->getLocale();
-        $pluralForm = Helper::getPluralForm($locale);
-        if (null === $pluralForm) {
-            throw new InvalidArgumentException(sprintf('Invalid locale: %s', $locale));
-        }
-        $numberOfPlurals = Helper::getNumberOfPlurals($locale);
 
         $header = new PoHeader($locale);
-        $header->setPluralForms($pluralForm);
-        if ($languageName = Helper::getLanguageName($locale)) {
-            $header->setLanguageName($languageName);
-        }
+        $numberOfPlurals = $header->getNumberOfPlurals();
         if ($projectName = ($options['project_name'] ?? null)) {
             $header->setProjectName($projectName);
         }
@@ -56,18 +46,18 @@ class PoFileDumper extends BasePoFileDumper
         $writer->open();
         foreach ($messages->getDomains() as $domain) {
             foreach ($messages->all($domain) as $source => $translation) {
-                $metadata = $messages->getMetadata($source, $domain);
                 $item = new PoItem();
-                $item->setContext(Helper::getContext($domain));
-                if ($plurals = ($metadata[Helper::METADATA_EXTRACTED_PLURALS] ?? null)) {
+                $item->setContext(PoItem::formatContext($domain));
+                $source = PoItem::splitStrings($source);
+                $translation = PoItem::splitStrings($translation, $numberOfPlurals);
+                if (count($source) > 1) {
                     $item->setPlural(true);
-                    $item->setSource($plurals);
-                    $item->setTranslation(array_map(static fn (int $index) => '@todo '.$index, range(0, $numberOfPlurals - 1)));
-                } else {
                     $item->setSource($source);
                     $item->setTranslation($translation);
+                } else {
+                    $item->setSource($source[0]);
+                    $item->setTranslation($translation[0]);
                 }
-
                 $writer->writeItem($item);
             }
         }

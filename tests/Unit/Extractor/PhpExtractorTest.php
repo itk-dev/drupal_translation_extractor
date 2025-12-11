@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\itk_translation_extractor\Test\Unit\Extractor;
 
+use Drupal\itk_translation_extractor\Translation\Dumper\PoItem;
 use Drupal\itk_translation_extractor\Translation\Extractor\PhpExtractor;
 use Drupal\itk_translation_extractor\Translation\Extractor\Visitor\TranslatableMarkupVisitor;
 use Drupal\itk_translation_extractor\Translation\Extractor\Visitor\TransMethodVisitor;
-use Drupal\itk_translation_extractor\Translation\Helper;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Translation\MessageCatalogue;
 
@@ -29,8 +29,8 @@ final class PhpExtractorTest extends TestCase
         $domains = $messages->getDomains();
 
         $this->assertCount(3, $domains);
-        $this->assertContains(Helper::UNDEFINED_DOMAIN, $domains);
-        $this->assertCount(3, $messages->all(Helper::UNDEFINED_DOMAIN));
+        $this->assertContains(PoItem::NO_CONTEXT, $domains);
+        $this->assertCount(3, $messages->all(PoItem::NO_CONTEXT));
         $this->assertCount(3, $messages->all('the context'));
         $this->assertContains('the context', $domains);
         $this->assertCount(3, $messages->all('another context'));
@@ -53,8 +53,8 @@ final class PhpExtractorTest extends TestCase
         $domains = $messages->getDomains();
 
         $this->assertCount(3, $domains);
-        $this->assertContains(Helper::UNDEFINED_DOMAIN, $domains);
-        $this->assertCount(1, $messages->all(Helper::UNDEFINED_DOMAIN));
+        $this->assertContains(PoItem::NO_CONTEXT, $domains);
+        $this->assertCount(1, $messages->all(PoItem::NO_CONTEXT));
         $this->assertCount(1, $messages->all('the context'));
         $this->assertContains('the context', $domains);
         $this->assertCount(1, $messages->all('another context'));
@@ -78,8 +78,8 @@ final class PhpExtractorTest extends TestCase
         $domains = $messages->getDomains();
 
         $this->assertCount(3, $domains);
-        $this->assertContains(Helper::UNDEFINED_DOMAIN, $domains);
-        $this->assertCount(1, $messages->all(Helper::UNDEFINED_DOMAIN));
+        $this->assertContains(PoItem::NO_CONTEXT, $domains);
+        $this->assertCount(1, $messages->all(PoItem::NO_CONTEXT));
         $this->assertContains('the context', $domains);
         $this->assertCount(1, $messages->all('the context'));
         $this->assertContains('another context', $domains);
@@ -103,8 +103,8 @@ final class PhpExtractorTest extends TestCase
         $domains = $messages->getDomains();
 
         $this->assertCount(3, $domains);
-        $this->assertContains(Helper::UNDEFINED_DOMAIN, $domains);
-        $this->assertCount(1, $messages->all(Helper::UNDEFINED_DOMAIN));
+        $this->assertContains(PoItem::NO_CONTEXT, $domains);
+        $this->assertCount(1, $messages->all(PoItem::NO_CONTEXT));
         $this->assertContains('the context', $domains);
         $this->assertCount(1, $messages->all('the context'));
         $this->assertContains('another context', $domains);
