@@ -93,7 +93,7 @@ final class TranslationNodeVisitor implements NodeVisitorInterface
                     $singular = $this->getStringValue($body);
                     $plural = $this->getStringValue($node->getNode('plural'));
                     $this->messages[] = [
-                        PoItem::joinStrings($singular, $plural),
+                        PoItem::joinStrings([$singular, $plural]),
                         $node->hasNode('options') ? $this->getReadDomainFromNode($node->getNode('options')) : PoItem::NO_CONTEXT,
                     ];
                 } else {

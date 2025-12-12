@@ -36,7 +36,7 @@ class TwigExtractor extends BaseTwigExtractor
         foreach ($visitor->getMessages() as $message) {
             $id = trim($message[0]);
             // $translation = Helper::joinStrings(...array_map(static fn (string $string) => '', [...Helper::splitStrings($id)]));
-            $translation = PoItem::joinStrings(...array_map(fn (string $string) => $this->prefix.$string, PoItem::splitStrings($id)));
+            $translation = PoItem::joinStrings(PoItem::splitStrings($id), $this->prefix);
             $domain = $message[1] ?: PoItem::NO_CONTEXT;
             $catalogue->set($id, $translation, $domain);
         }

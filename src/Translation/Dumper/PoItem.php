@@ -6,9 +6,9 @@ class PoItem extends \Drupal\Component\Gettext\PoItem
 {
     public const string NO_CONTEXT = '__no_context__';
 
-    public static function joinStrings(string ...$strings): string
+    public static function joinStrings(array $strings, string $prefix = ''): string
     {
-        return implode(self::DELIMITER, [...$strings]);
+        return implode(self::DELIMITER, array_map(fn (string $string) => $prefix.$string, $strings));
     }
 
     /**

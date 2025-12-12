@@ -54,7 +54,7 @@ final class TranslatableMarkupVisitor extends AbstractVisitor implements NodeVis
             }
             $context ??= PoItem::NO_CONTEXT;
 
-            $this->addMessageToCatalogue(PoItem::joinStrings($singular, $plural), $context, $node->getStartLine());
+            $this->addMessageToCatalogue(PoItem::joinStrings([$singular, $plural]), $context, $node->getStartLine());
         }
 
         return null;

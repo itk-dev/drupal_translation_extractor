@@ -456,7 +456,9 @@ EOF
     {
         $output = $input->getOption('output');
 
-        $sourceInfo['source_dir'] = dirname($sourceInfo['source']);
+        if ($source = ($sourceInfo['source'] ?? null)) {
+            $sourceInfo['source_dir'] = is_dir($source) ? $source : dirname($source);
+        }
 
         return preg_replace_callback(
             '/%([a-z0-9_]+)/i',
