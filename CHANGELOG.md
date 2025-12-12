@@ -7,4 +7,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/itk-dev/itk_translation_extractor
+[Unreleased]: https://github.com/itk-dev/drupal_translation_extractor

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Drupal\itk_translation_extractor\Command;
+namespace Drupal\drupal_translation_extractor\Command;
 
 use Drupal\Core\Extension\ExtensionPathResolver;
-use Drupal\itk_translation_extractor\Translation\Dumper\PoFileDumper;
-use Drupal\itk_translation_extractor\Translation\Dumper\PoItem;
-use Drupal\itk_translation_extractor\Translation\TwigExtractor;
+use Drupal\drupal_translation_extractor\Translation\Dumper\PoFileDumper;
+use Drupal\drupal_translation_extractor\Translation\Dumper\PoItem;
+use Drupal\drupal_translation_extractor\Translation\TwigExtractor;
 use Drupal\locale\StringStorageInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -29,7 +29,7 @@ use Twig\Environment;
  * @see https://github.com/symfony/framework-bundle/blob/7.3/Command/TranslationExtractCommand.php
  */
 #[AsCommand(
-    name: 'itk_translation_extractor:translation:extract',
+    name: 'drupal_translation_extractor:translation:extract',
     description: 'Extract missing translations keys from code to translation files',
 )]
 final class TranslationExtractCommand extends Command
@@ -51,7 +51,7 @@ final class TranslationExtractCommand extends Command
     /**
      * The extractor.
      *
-     * @var \Drupal\itk_translation_extractor\Translation\Extractor\TwigExtractor
+     * @var \Drupal\drupal_translation_extractor\Translation\Extractor\TwigExtractor
      */
     private TwigExtractor $extractor;
 

@@ -1,6 +1,6 @@
 {
-    "name": "drupal/itk_translation_extractor",
-    "description": "itk_translation_extractor",
+    "name": "itk-dev/drupal_translation_extractor",
+    "description": "drupal_translation_extractor",
     "license": "MIT",
     "type": "drupal-module",
     "require": {
@@ -17,12 +17,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Drupal\\itk_translation_extractor\\": "src/"
+            "Drupal\\drupal_translation_extractor\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Drupal\\itk_translation_extractor\\Test\\": "tests/"
+            "Drupal\\drupal_translation_extractor\\Test\\": "tests/"
         }
     },
     "config": {

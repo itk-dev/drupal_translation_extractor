@@ -1,10 +1,10 @@
 <?php
 
-namespace Drupal\itk_translation_extractor\NodeVisitor;
+namespace Drupal\drupal_translation_extractor\NodeVisitor;
 
 use Drupal\Core\Template\TwigNodeTrans;
 use Drupal\Core\Template\TwigNodeTrans as TransNode;
-use Drupal\itk_translation_extractor\Translation\Dumper\PoItem;
+use Drupal\drupal_translation_extractor\Translation\Dumper\PoItem;
 use Twig\Environment;
 use Twig\Error\SyntaxError;
 use Twig\Node\CheckToStringNode;

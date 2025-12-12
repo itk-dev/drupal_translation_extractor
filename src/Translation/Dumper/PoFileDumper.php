@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\itk_translation_extractor\Translation\Dumper;
+namespace Drupal\drupal_translation_extractor\Translation\Dumper;
 
 use Drupal\Component\Gettext\PoStreamWriter;
 use Symfony\Component\Translation\Dumper\PoFileDumper as BasePoFileDumper;

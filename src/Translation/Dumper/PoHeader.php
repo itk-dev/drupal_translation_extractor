@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\itk_translation_extractor\Translation\Dumper;
+namespace Drupal\drupal_translation_extractor\Translation\Dumper;
 
-use Drupal\itk_translation_extractor\Exception\InvalidArgumentException;
+use Drupal\drupal_translation_extractor\Exception\InvalidArgumentException;
 
 class PoHeader extends \Drupal\Component\Gettext\PoHeader
 {

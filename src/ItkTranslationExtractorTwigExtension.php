@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Drupal\itk_translation_extractor;
+namespace Drupal\drupal_translation_extractor;
 
-use Drupal\itk_translation_extractor\NodeVisitor\TranslationNodeVisitor;
+use Drupal\drupal_translation_extractor\NodeVisitor\TranslationNodeVisitor;
 use Twig\Extension\AbstractExtension;
 
 /**

@@ -1,10 +1,10 @@
 services:
-  itk_translation_extractor.translation_extract:
-    class: Drupal\itk_translation_extractor\Command\TranslationExtractCommand
+  drupal_translation_extractor.translation_extract:
+    class: Drupal\drupal_translation_extractor\Command\TranslationExtractCommand
     arguments:
       - "@twig"
       - "@extension.path.resolver"
       - "@locale.storage"
-      - "@Drupal\\itk_translation_extractor\\Translation\\Dumper\\PoFileDumper"
+      - "@Drupal\\drupal_translation_extractor\\Translation\\Dumper\\PoFileDumper"
     tags:
       - { name: console.command }

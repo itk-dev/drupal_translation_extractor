@@ -9,13 +9,13 @@ This Drupal translation extractor stands on the shoulders of giants:
 ## Installation
 
 ``` shell
-composer require --dev drupal/itk_translation_extractor:^1.0
-drush pm:install itk_translation_extractor
+composer require --dev itk-dev/drupal_translation_extractor:^1.0
+drush pm:install drupal_translation_extractor
 ```
 
 ## Use
 
-The main entrypoint is the `itk_translation_extractor:translation:extract` Drush command. This command is basically
+The main entrypoint is the `drupal_translation_extractor:translation:extract` Drush command. This command is basically
 Symfony's [`translation:extract` console
 command](https://symfony.com/doc/current/translation.html#extracting-translation-contents-and-updating-catalogs-automatically)
 with a few changes and additions outlined below.
@@ -51,7 +51,7 @@ module:my_custom_module` will be converted to `--source modules/custom/my_custom
 Running
 
 ``` shell
-drush itk_translation_extractor:translation:extract da --dump-messages --force --source module:my_modules --output=%source/translation/%module.%locale.po
+drush drupal_translation_extractor:translation:extract da --dump-messages --force --source module:my_modules --output=%source/translation/%module.%locale.po
 ```
 
 will find translations in all PHP and Twig files in the `web/modules/custom/my_module` directory and write the result to

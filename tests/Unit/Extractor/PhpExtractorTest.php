@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Drupal\itk_translation_extractor\Test\Unit\Extractor;
+namespace Drupal\drupal_translation_extractor\Test\Unit\Extractor;
 
-use Drupal\itk_translation_extractor\Translation\Dumper\PoItem;
-use Drupal\itk_translation_extractor\Translation\Extractor\PhpExtractor;
-use Drupal\itk_translation_extractor\Translation\Extractor\Visitor\TranslatableMarkupVisitor;
-use Drupal\itk_translation_extractor\Translation\Extractor\Visitor\TransMethodVisitor;
+use Drupal\drupal_translation_extractor\Translation\Dumper\PoItem;
+use Drupal\drupal_translation_extractor\Translation\Extractor\PhpExtractor;
+use Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TranslatableMarkupVisitor;
+use Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TransMethodVisitor;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Translation\MessageCatalogue;
 

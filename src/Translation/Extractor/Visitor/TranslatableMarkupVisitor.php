@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\itk_translation_extractor\Translation\Extractor\Visitor;
+namespace Drupal\drupal_translation_extractor\Translation\Extractor\Visitor;
 
-use Drupal\itk_translation_extractor\Translation\Dumper\PoItem;
+use Drupal\drupal_translation_extractor\Translation\Dumper\PoItem;
 use PhpParser\Node;
 use PhpParser\NodeVisitor;
 

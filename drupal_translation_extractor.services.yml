@@ -1,0 +1,9 @@
+services:
+  _defaults:
+    autowire: true
+
+  Drupal\drupal_translation_extractor\Translation\Dumper\PoFileDumper:
+
+  Drupal\drupal_translation_extractor\ItkTranslationExtractorTwigExtension:
+    tags:
+      - { name: twig.extension }

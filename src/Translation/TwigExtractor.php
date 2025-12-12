@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\itk_translation_extractor\Translation;
+namespace Drupal\drupal_translation_extractor\Translation;
 
-use Drupal\itk_translation_extractor\ItkTranslationExtractorTwigExtension;
-use Drupal\itk_translation_extractor\Translation\Dumper\PoItem;
+use Drupal\drupal_translation_extractor\ItkTranslationExtractorTwigExtension;
+use Drupal\drupal_translation_extractor\Translation\Dumper\PoItem;
 use Symfony\Bridge\Twig\Translation\TwigExtractor as BaseTwigExtractor;
 use Symfony\Component\Translation\MessageCatalogue;
 use Twig\Environment;

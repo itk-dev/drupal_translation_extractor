@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\itk_translation_extractor\Exception;
+namespace Drupal\drupal_translation_extractor\Exception;
 
 /**
  * Exception interface for all exceptions thrown by the module.

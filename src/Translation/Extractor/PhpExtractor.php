@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\itk_translation_extractor\Translation\Extractor;
+namespace Drupal\drupal_translation_extractor\Translation\Extractor;
 
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor;
