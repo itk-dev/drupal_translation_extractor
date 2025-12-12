@@ -43,7 +43,7 @@ class PoHeader extends \Drupal\Component\Gettext\PoHeader
     {
         preg_match('/nplurals=(\d)+;/', (string) $this->pluralForms, $matches);
 
-        return (int) $matches[1] ?? 1;
+        return (int) ($matches[1] ?? 1);
     }
 
     // Lifted from

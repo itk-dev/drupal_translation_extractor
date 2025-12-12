@@ -4,6 +4,8 @@ services:
   phpfpm:
     image: itkdev/php8.4-fpm:latest
     user: ${COMPOSE_USER:-deploy}
+    environment:
+      - PHP_MEMORY_LIMIT=512M
     volumes:
       - .:/app
 

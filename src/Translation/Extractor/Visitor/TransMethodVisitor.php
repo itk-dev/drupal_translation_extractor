@@ -18,7 +18,7 @@ final class TransMethodVisitor extends AbstractVisitor
             return null;
         }
 
-        if (!\is_string($node->name) && !$node->name instanceof Node\Identifier && !$node->name instanceof Node\Name) {
+        if (!$node->name instanceof Node\Identifier && !$node->name instanceof Node\Name) {
             return null;
         }
 

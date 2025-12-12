@@ -37,7 +37,7 @@ abstract class AbstractVisitor extends BaseAbstractVisitor implements NodeVisito
         $args = $node instanceof Node\Expr\CallLike ? $node->getRawArgs() : $node->args;
 
         if (($arg = $args[$index] ?? null) instanceof Node\Arg) {
-            return $arg?->value instanceof Node\Expr\Array_ ? $arg->value : null;
+            return $arg->value instanceof Node\Expr\Array_ ? $arg->value : null;
         }
 
         return null;

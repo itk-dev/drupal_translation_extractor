@@ -118,7 +118,7 @@ final class TranslationNodeVisitor implements NodeVisitorInterface
         return $node;
     }
 
-    public function leaveNode(Node $node, Environment $env): ?Node
+    public function leaveNode(Node $node, Environment $env): Node
     {
         return $node;
     }
@@ -126,28 +126,6 @@ final class TranslationNodeVisitor implements NodeVisitorInterface
     public function getPriority(): int
     {
         return 0;
-    }
-
-    private function getReadMessageFromArguments(Node $arguments, int $index): ?string
-    {
-        if ($arguments->hasNode('message')) {
-            $argument = $arguments->getNode('message');
-        } elseif ($arguments->hasNode($index)) {
-            $argument = $arguments->getNode($index);
-        } else {
-            return null;
-        }
-
-        return $this->getReadMessageFromNode($argument);
-    }
-
-    private function getReadMessageFromNode(Node $node): ?string
-    {
-        if ($node instanceof ConstantExpression) {
-            return $node->getAttribute('value');
-        }
-
-        return null;
     }
 
     private function getReadDomainFromArguments(Node $arguments, int $index): string
@@ -209,11 +187,13 @@ final class TranslationNodeVisitor implements NodeVisitorInterface
     }
 
     /**
-     * Verbatim copy of TwigNodeTrans::compileString().
+     * Almost verbatim copy of TwigNodeTrans::compileString().
+     *
+     * Return type has been added.
      *
      * @see TwigNodeTrans::compileString()
      */
-    private function compileString(Node $body)
+    private function compileString(Node $body): array
     {
         if ($body instanceof NameExpression || $body instanceof ConstantExpression || $body instanceof TempNameExpression) {
             return [$body, []];
