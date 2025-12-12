@@ -13,7 +13,8 @@
         "ergebnis/composer-normalize": "^2.48",
         "friendsofphp/php-cs-fixer": "^3.91",
         "phpunit/phpunit": "^12.5",
-        "vincentlanglet/twig-cs-fixer": "^3.11"
+        "vincentlanglet/twig-cs-fixer": "^3.11",
+        "phpstan/phpstan": "^2.1"
     },
     "autoload": {
         "psr-4": {

@@ -1,0 +1,25 @@
+parameters:
+	level: 6
+	paths:
+		- src
+		- tests
+	excludePaths:
+		- tests/Unit/Extractor/resources/
+
+	ignoreErrors:
+		- '#^Method .+ has parameter .+ with no value type specified in iterable type array\.$#'
+		- '#^Method .+ has parameter .+ with no value type specified in iterable type iterable\.$#'
+		- '#^Method .+ return type has no value type specified in iterable type array\.$#'
+		- '#^Method .+ return type has no value type specified in iterable type iterable\.$#'
+		- '#^Property .+ type has no value type specified in iterable type array\.$#'
+
+		# Actual declaration of Twig\Node\Node::hasNode does not agree with parameter type in doc block.
+		- '#^Parameter \#1 \$name of method Twig\\Node\\Node::hasNode\(\) expects string, int given\.$#'
+		- '#^Parameter \#1 \$name of method Twig\\Node\\Node::getNode\(\) expects string, int given\.$#'
+
+		# Stealing also includes type errors …
+		- '#^Call to function is_null\(\) with Twig\\Node\\Node will always evaluate to false\.$#'
+
+		# Drupal is not loaded
+		- '#invalid type Drupal\\locale\\StringStorageInterface#'
+		- '#unknown class Drupal\\locale\\StringStorageInterface#'

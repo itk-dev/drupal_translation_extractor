@@ -50,8 +50,6 @@ final class TranslationExtractCommand extends Command
 
     /**
      * The extractor.
-     *
-     * @var \Drupal\drupal_translation_extractor\Translation\Extractor\TwigExtractor
      */
     private TwigExtractor $extractor;
 
@@ -244,6 +242,7 @@ EOF
             $io->comment('Writing files...');
 
             $operationResult = $operation->getResult();
+            assert($operationResult instanceof MessageCatalogue);
             if ($sort) {
                 $operationResult = $this->sortCatalogue($operationResult, $sort);
             }
@@ -392,7 +391,7 @@ EOF
         return $filteredPaths;
     }
 
-    private function loadTranslatedMessages(MessageCatalogue $extractedCatalogue)
+    private function loadTranslatedMessages(MessageCatalogue $extractedCatalogue): MessageCatalogue
     {
         $currentCatalogue = new MessageCatalogue($extractedCatalogue->getLocale());
 

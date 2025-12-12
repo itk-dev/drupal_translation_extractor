@@ -132,3 +132,10 @@ tasks:
       - task: coding-standards:yaml:apply
       # Cf. .github/workflows/yaml.yaml
       - docker compose run --rm prettier '**/*.{yml,yaml}' --check
+
+  code-analysis:
+    desc: "Run static code analysis"
+    cmds:
+      - task: compose
+        vars:
+          TASK_ARGS: run --rm phpfpm vendor/bin/phpstan
