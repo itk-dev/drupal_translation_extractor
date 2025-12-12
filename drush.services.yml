@@ -4,7 +4,6 @@ services:
     arguments:
       - "@twig"
       - "@extension.path.resolver"
-      - "@language_manager"
       - "@locale.storage"
       - "@Drupal\\itk_translation_extractor\\Translation\\Dumper\\PoFileDumper"
     tags:

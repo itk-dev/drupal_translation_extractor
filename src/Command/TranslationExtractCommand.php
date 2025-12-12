@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\itk_translation_extractor\Command;
 
 use Drupal\Core\Extension\ExtensionPathResolver;
-use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\itk_translation_extractor\Translation\Dumper\PoFileDumper;
 use Drupal\itk_translation_extractor\Translation\Dumper\PoItem;
 use Drupal\itk_translation_extractor\Translation\TwigExtractor;
@@ -59,7 +58,6 @@ final class TranslationExtractCommand extends Command
     public function __construct(
         private readonly Environment $twig,
         private readonly ExtensionPathResolver $extensionPathResolver,
-        private readonly LanguageManagerInterface $languageManager,
         private readonly StringStorageInterface $stringStorage,
         PoFileDumper $poFileDumper,
     ) {
@@ -87,9 +85,8 @@ final class TranslationExtractCommand extends Command
               new InputOption('sort', null, InputOption::VALUE_REQUIRED, 'Return list of messages sorted alphabetically'),
               new InputOption('as-tree', null, InputOption::VALUE_REQUIRED, 'Dump the messages as a tree-like structure: The given value defines the level where to switch to inline YAML'),
 
-              new InputOption('module', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Module(s) to process'),
-              new InputOption('theme', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Theme(s) to process'),
-              new InputOption('output-name', null, InputOption::VALUE_REQUIRED, 'Output name. Required if --force is specified.'),
+              new InputOption('source', null, InputOption::VALUE_REQUIRED, 'Source path.'),
+              new InputOption('output', null, InputOption::VALUE_REQUIRED, 'Output path. Required if --force is specified.'),
           ])
           ->setHelp(<<<'EOF'
 The <info>%command.name%</info> command extracts translation strings from templates
@@ -135,9 +132,9 @@ EOF
 
             return 1;
         }
-        $outputName = $input->getOption('output-name');
-        if (!$outputName && true === $input->getOption('force')) {
-            $errorIo->error('--output-name is required when --force is specified');
+        $outputPath = $input->getOption('output');
+        if (null === $outputPath && true === $input->getOption('force')) {
+            $errorIo->error('--output is required when --force is specified');
 
             return 1;
         }
@@ -158,37 +155,9 @@ EOF
         }
 
         // Define Root Paths
-        $transPaths = $this->getRootTransPaths($input);
-        $codePaths = $this->getRootCodePaths($input);
+        [$codePaths, $sourceInfo] = $this->getRootCodePaths($input);
 
         $currentName = 'default directory';
-
-        //    // Override with provided Bundle info
-        //    if (null !== $input->getArgument('bundle')) {
-        //      try {
-        //        $foundBundle = $kernel->getBundle($input->getArgument('bundle'));
-        //        $bundleDir = $foundBundle->getPath();
-        //        $transPaths = [is_dir($bundleDir.'/Resources/translations') ? $bundleDir.'/Resources/translations' : $bundleDir.'/translations'];
-        //        $codePaths = [is_dir($bundleDir.'/Resources/views') ? $bundleDir.'/Resources/views' : $bundleDir.'/templates'];
-        //        if ($this->defaultTransPath) {
-        //          $transPaths[] = $this->defaultTransPath;
-        //        }
-        //        if ($this->defaultViewsPath) {
-        //          $codePaths[] = $this->defaultViewsPath;
-        //        }
-        //        $currentName = $foundBundle->getName();
-        //      } catch (\InvalidArgumentException) {
-        //        // such a bundle does not exist, so treat the argument as path
-        //        $path = $input->getArgument('bundle');
-        //
-        //        $transPaths = [$path.'/translations'];
-        //        $codePaths = [$path.'/templates'];
-        //
-        //        if (!is_dir($transPaths[0])) {
-        //          throw new InvalidArgumentException(\sprintf('"%s" is neither an enabled bundle nor a directory.', $transPaths[0]));
-        //        }
-        //      }
-        //    }
 
         $io->title('Translation Messages Extractor and Dumper');
         $io->comment(\sprintf('Generating "<info>%s</info>" translation files for "<info>%s</info>"', $input->getArgument('locale'), $currentName));
@@ -196,9 +165,6 @@ EOF
         $io->comment('Parsing templates...');
         $prefix = $input->getOption('no-fill') ? self::NO_FILL_PREFIX : $input->getOption('prefix');
         $extractedCatalogue = $this->extractMessages($input->getArgument('locale'), $codePaths, $prefix);
-
-        // $io->comment('Loading translation files...');
-        // $currentCatalogue = $this->loadCurrentMessages($input->getArgument('locale'), $transPaths);
 
         $io->comment('Loading translated messages...');
         $currentCatalogue = true === $input->getOption('no-fill')
@@ -277,17 +243,6 @@ EOF
         if (true === $input->getOption('force')) {
             $io->comment('Writing files...');
 
-            $bundleTransPath = false;
-            foreach ($transPaths as $path) {
-                if (is_dir($path)) {
-                    $bundleTransPath = $path;
-                }
-            }
-
-            if (!$bundleTransPath) {
-                $bundleTransPath = end($transPaths);
-            }
-
             $operationResult = $operation->getResult();
             if ($sort) {
                 $operationResult = $this->sortCatalogue($operationResult, $sort);
@@ -297,21 +252,17 @@ EOF
                 $this->removeNoFillTranslations($operationResult);
             }
 
-            $outputName = $input->getOption('output-name');
+            $outputPath = $this->getOutputPath($input, $sourceInfo + [
+                'locale' => $operationResult->getLocale(),
+            ]);
             $dumperOptions = [
-                'path' => dirname($outputName),
-                'output_name' => basename($outputName),
+                'path' => dirname($outputPath),
+                'output_name' => basename($outputPath),
                 // 'default_locale' => $this->defaultLocale,
                 'xliff_version' => $xliffVersion,
                 'as_tree' => $input->getOption('as-tree'),
                 'inline' => $input->getOption('as-tree') ?? 0,
             ];
-
-            if ($language = $this->languageManager->getLanguage($input->getArgument('locale'))) {
-                $dumperOptions['language_name'] = $language->getName();
-            }
-            // @todo
-            // $dumperOptions['project_name'] = …
 
             $this->writer->write($operationResult, $format, $dumperOptions);
 
@@ -461,29 +412,7 @@ EOF
             }
         }
 
-        // Load from database
-
         return $currentCatalogue;
-    }
-
-    private function getRootTransPaths(InputInterface $input): array
-    {
-        $transPaths = [];
-
-        return $transPaths;
-    }
-
-    private function getRootCodePaths(InputInterface $input): array
-    {
-        $codePaths = [];
-        foreach ($input->getOption('module') as $module) {
-            $codePaths[] = $this->extensionPathResolver->getPath('module', $module);
-        }
-        foreach ($input->getOption('theme') as $theme) {
-            $codePaths[] = $this->extensionPathResolver->getPath('theme', $theme);
-        }
-
-        return $codePaths;
     }
 
     private function removeNoFillTranslations(MessageCatalogueInterface $operation): void
@@ -495,5 +424,44 @@ EOF
                 }
             }
         }
+    }
+
+    /**
+     * @return array
+     *               - array of source paths (only one)
+     *               - array info
+     */
+    private function getRootCodePaths(InputInterface $input): array
+    {
+        $info = [];
+        $source = $input->getOption('source');
+
+        // Expand module and theme paths.
+        $source = preg_replace_callback(
+            '/(module|theme):([a-z0-9_]+)/i',
+            function (array $matches) use (&$info): string {
+                $info[$matches[1]] = $matches[2];
+
+                return $this->extensionPathResolver->getPath($matches[1], $matches[2]);
+            },
+            $source,
+        );
+
+        $info['source'] = $source;
+
+        return [[$source], $info];
+    }
+
+    private function getOutputPath(InputInterface $input, array $sourceInfo): string
+    {
+        $output = $input->getOption('output');
+
+        $sourceInfo['source_dir'] = dirname($sourceInfo['source']);
+
+        return preg_replace_callback(
+            '/%([a-z0-9_]+)/i',
+            fn (array $matches) => $sourceInfo[$matches[1]] ?? $matches[0],
+            $output,
+        );
     }
 }
