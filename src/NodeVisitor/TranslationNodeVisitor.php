@@ -65,19 +65,19 @@ final class TranslationNodeVisitor implements NodeVisitorInterface
                 $node->getNode('node')->getAttribute('value'),
                 $this->getReadDomainFromArguments($node->getNode('arguments'), 1),
             ];
-        // @todo Is {{ t('…') }} supported in Drupal?
-        //        } elseif (
-        //            $node instanceof FunctionExpression
-        //            && 't' === $node->getAttribute('name')
-        //        ) {
-        //            $nodeArguments = $node->getNode('arguments');
+        // {{ t('…') }} is not supported in Drupal.
+        // } elseif (
+        //     $node instanceof FunctionExpression
+        //     && 't' === $node->getAttribute('name')
+        // ) {
+        //     $nodeArguments = $node->getNode('arguments');
         //
-        //            if ($nodeArguments->getIterator()->current() instanceof ConstantExpression) {
-        //                $this->messages[] = [
-        //                    $this->getReadMessageFromArguments($nodeArguments, 0),
-        //                    $this->getReadDomainFromArguments($nodeArguments, 2),
-        //                ];
-        //            }
+        //     if ($nodeArguments->getIterator()->current() instanceof ConstantExpression) {
+        //         $this->messages[] = [
+        //             $this->getReadMessageFromArguments($nodeArguments, 0),
+        //             $this->getReadDomainFromArguments($nodeArguments, 2),
+        //         ];
+        //     }
         } elseif ($node instanceof TransNode) {
             // extract trans nodes
             $body = $node->getNode('body');
