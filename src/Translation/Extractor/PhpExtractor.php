@@ -59,9 +59,13 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
         $this->prefix = $prefix;
     }
 
+    private static array $supportedFileExtensions = [
+        'php', 'install', 'module', 'theme',
+    ];
+
     protected function canBeExtracted(string $file): bool
     {
-        return 'php' === pathinfo($file, \PATHINFO_EXTENSION)
+        return in_array(pathinfo($file, \PATHINFO_EXTENSION), self::$supportedFileExtensions, true)
             && $this->isFile($file)
             && preg_match('/\bt\(|->t(?:rans)?\(|TranslatableMarkup/i', file_get_contents($file));
     }
@@ -72,6 +76,6 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
             throw new \LogicException(\sprintf('You cannot use "%s" as the "symfony/finder" package is not installed. Try running "composer require symfony/finder".', static::class));
         }
 
-        return (new Finder())->files()->name('*.php')->in($resource);
+        return (new Finder())->files()->name(array_map(static fn (string $ext) => '*.'.$ext, self::$supportedFileExtensions))->in($resource);
     }
 }

@@ -61,6 +61,22 @@ final class PhpExtractorTest extends TestCase
         $this->assertContains('another context', $domains);
     }
 
+    public function testTransMethodDrupalModule(): void
+    {
+        $visitors = [
+            new TransMethodVisitor(),
+        ];
+        $extractor = new PhpExtractor($visitors);
+        $resource = __DIR__.'/resources/';
+        $locale = 'da';
+        $messages = new MessageCatalogue($locale);
+        $extractor->extract($resource, $messages);
+
+        $domains = $messages->getDomains();
+
+        $this->assertCount(9, $domains);
+    }
+
     public function testTranslatableMarkup(): void
     {
         $visitors = [
