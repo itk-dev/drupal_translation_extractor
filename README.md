@@ -1,5 +1,7 @@
 # Translation extractor
 
+Extracts translations from PHP files and Twig templates.
+
 This Drupal translation extractor stands on the shoulders of giants:
 
 * <https://www.drupal.org/project/potx>
@@ -38,13 +40,18 @@ module:my_custom_module` will be converted to `--source modules/custom/my_custom
 
 `--output` The output path. The value can use these placeholders:
 
-| Name          | Value                                                       |
-|---------------|-------------------------------------------------------------|
-| `%locale`     | The locale being extracted                                  |
-| `%module`     | The module name if specified using `module:…` in `--source` |
-| `%source_dir` | The directory of `%source`                                  |
-| `%source`     | The expanded value of `--source`                            |
-| `%theme`      | The theme name if specified using `theme:…` in `--source`   |
+| Name            | Value                                                       |
+|-----------------|-------------------------------------------------------------|
+| `%locale`       | The locale being extracted                                  |
+| `%module`       | The module name if specified using `module:…` in `--source` |
+| `%source_dir`   | The directory of `%source`                                  |
+| `%source`       | The expanded value of `--source`                            |
+| `%theme`        | The theme name if specified using `theme:…` in `--source`   |
+| `%language`[^1] | Alias for `%locale`                                         |
+| `%project` [^1] | Alias for either `%module` or `%theme` (whichever is set)   |
+
+[^1]: Matching placeholders used the Locale module (cf.
+    [locale.api.php](https://git.drupalcode.org/project/drupal/-/blob/11.x/core/modules/locale/locale.api.php)).
 
 ### Example
 

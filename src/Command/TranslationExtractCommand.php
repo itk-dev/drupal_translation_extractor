@@ -459,6 +459,11 @@ EOF
         if ($source = ($sourceInfo['source'] ?? null)) {
             $sourceInfo['source_dir'] = is_dir($source) ? $source : dirname($source);
         }
+        $sourceInfo['project'] = $sourceInfo['module'] ?? $sourceInfo['theme'] ?? null;
+        $sourceInfo['language'] = $sourceInfo['locale'] ?? null;
+
+        // Remove empty values.
+        $sourceInfo = array_filter($sourceInfo);
 
         return preg_replace_callback(
             '/%([a-z0-9_]+)/i',
