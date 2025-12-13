@@ -19,7 +19,3 @@ parameters:
 
 		# Stealing also includes type errors …
 		- '#^Call to function is_null\(\) with Twig\\Node\\Node will always evaluate to false\.$#'
-
-		# Drupal is not loaded
-		- '#invalid type Drupal\\locale\\StringStorageInterface#'
-		- '#unknown class Drupal\\locale\\StringStorageInterface#'

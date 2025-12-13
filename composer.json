@@ -16,13 +16,10 @@
         "vincentlanglet/twig-cs-fixer": "^3.11",
         "phpstan/phpstan": "^2.1"
     },
-    "autoload": {
-        "psr-4": {
-            "Drupal\\drupal_translation_extractor\\": "src/"
-        }
-    },
     "autoload-dev": {
         "psr-4": {
+            "Drupal\\drupal_translation_extractor\\": "src/",
+            "Drupal\\locale\\": "vendor/drupal/core/modules/locale/src/",
             "Drupal\\drupal_translation_extractor\\Test\\": "tests/"
         }
     },
