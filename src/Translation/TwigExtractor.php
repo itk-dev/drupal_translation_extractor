@@ -5,6 +5,7 @@ namespace Drupal\drupal_translation_extractor\Translation;
 use Drupal\drupal_translation_extractor\ItkTranslationExtractorTwigExtension;
 use Drupal\drupal_translation_extractor\Translation\Dumper\PoItem;
 use Symfony\Bridge\Twig\Translation\TwigExtractor as BaseTwigExtractor;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Translation\MessageCatalogue;
 use Twig\Environment;
 use Twig\Source;
@@ -17,6 +18,7 @@ class TwigExtractor extends BaseTwigExtractor
     private string $prefix = '';
 
     public function __construct(
+        #[Autowire(service: 'twig')]
         private Environment $twig,
     ) {
         parent::__construct($this->twig);

@@ -19,3 +19,6 @@ parameters:
 
 		# Stealing also includes type errors …
 		- '#^Call to function is_null\(\) with Twig\\Node\\Node will always evaluate to false\.$#'
+
+		# We check for the getFormats method in the constructor.
+		- '#^Call to an undefined method Symfony\\Component\\Translation\\Writer\\TranslationWriterInterface::getFormats\(\)\.$#'

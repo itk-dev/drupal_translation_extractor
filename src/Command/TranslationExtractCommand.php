@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Drupal\drupal_translation_extractor\Command;
 
 use Drupal\Core\Extension\ExtensionPathResolver;
-use Drupal\drupal_translation_extractor\Translation\Dumper\PoFileDumper;
 use Drupal\drupal_translation_extractor\Translation\Dumper\PoItem;
-use Drupal\drupal_translation_extractor\Translation\TwigExtractor;
 use Drupal\locale\StringStorageInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -18,10 +16,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Translation\Catalogue\MergeOperation;
 use Symfony\Component\Translation\Catalogue\TargetOperation;
+use Symfony\Component\Translation\Extractor\ExtractorInterface;
 use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\MessageCatalogueInterface;
-use Symfony\Component\Translation\Writer\TranslationWriter;
-use Twig\Environment;
+use Symfony\Component\Translation\Writer\TranslationWriterInterface;
 
 /**
  * Lifted from Symfony's `translation:extract` command.
@@ -43,28 +41,17 @@ final class TranslationExtractCommand extends Command
     ];
     private const NO_FILL_PREFIX = "\0NoFill\0";
 
-    /**
-     * The writer.
-     */
-    private TranslationWriter $writer;
-
-    /**
-     * The extractor.
-     */
-    private TwigExtractor $extractor;
-
     public function __construct(
-        private readonly Environment $twig,
         private readonly ExtensionPathResolver $extensionPathResolver,
         private readonly StringStorageInterface $stringStorage,
-        PoFileDumper $poFileDumper,
+        private readonly ExtractorInterface $extractor,
+        private readonly TranslationWriterInterface $writer,
     ) {
-        $this->extractor = new TwigExtractor($this->twig);
-
-        $this->writer = new TranslationWriter();
-        $this->writer->addDumper('po', $poFileDumper);
-
         parent::__construct();
+
+        if (!method_exists($writer, 'getFormats')) {
+            throw new \InvalidArgumentException(\sprintf('The writer class "%s" does not implement the "getFormats()" method.', $writer::class));
+        }
     }
 
     protected function configure(): void
