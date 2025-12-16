@@ -12,15 +12,15 @@
     "require-dev": {
         "ergebnis/composer-normalize": "^2.48",
         "friendsofphp/php-cs-fixer": "^3.91",
+        "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^12.5",
-        "vincentlanglet/twig-cs-fixer": "^3.11",
-        "phpstan/phpstan": "^2.1"
+        "vincentlanglet/twig-cs-fixer": "^3.11"
     },
     "autoload-dev": {
         "psr-4": {
             "Drupal\\drupal_translation_extractor\\": "src/",
-            "Drupal\\locale\\": "vendor/drupal/core/modules/locale/src/",
-            "Drupal\\drupal_translation_extractor\\Test\\": "tests/"
+            "Drupal\\drupal_translation_extractor\\Test\\": "tests/",
+            "Drupal\\locale\\": "vendor/drupal/core/modules/locale/src/"
         }
     },
     "config": {

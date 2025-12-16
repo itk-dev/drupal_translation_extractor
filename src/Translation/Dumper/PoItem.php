@@ -19,9 +19,13 @@ class PoItem extends \Drupal\Component\Gettext\PoItem
     {
         $string = parent::__toString();
 
+        $flags = [];
         if ($this->fuzzy) {
+            $flags[] = 'fuzzy';
+        }
+        if (!empty($flags)) {
             // https://www.gnu.org/savannah-checkouts/gnu/gettext/manual/gettext.html#Fuzzy-Entries
-            $string = '#, fuzzy'."\n".$string;
+            $string = '#, '.implode(',', $flags)."\n".$string;
         }
 
         return $string;
@@ -43,6 +47,11 @@ class PoItem extends \Drupal\Component\Gettext\PoItem
         }
 
         return $strings;
+    }
+
+    public static function fromContext(?string $context): string
+    {
+        return $context ?: self::NO_CONTEXT;
     }
 
     public static function formatContext(?string $domain): string

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\drupal_translation_extractor\Command;
 
+use Drupal\Component\Gettext\PoStreamReader;
 use Drupal\Core\Extension\ExtensionPathResolver;
+use Drupal\drupal_translation_extractor\Exception\InvalidArgumentException;
 use Drupal\drupal_translation_extractor\Translation\Dumper\PoItem;
 use Drupal\locale\StringStorageInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -42,10 +44,11 @@ final class TranslationExtractCommand extends Command
     private const NO_FILL_PREFIX = "\0NoFill\0";
 
     public function __construct(
+        private readonly TranslationWriterInterface $writer,
+        private PoStreamReader $reader,
+        private readonly ExtractorInterface $extractor,
         private readonly ExtensionPathResolver $extensionPathResolver,
         private readonly StringStorageInterface $stringStorage,
-        private readonly ExtractorInterface $extractor,
-        private readonly TranslationWriterInterface $writer,
     ) {
         parent::__construct();
 
@@ -59,7 +62,6 @@ final class TranslationExtractCommand extends Command
         $this
           ->setDefinition([
               new InputArgument('locale', InputArgument::REQUIRED, 'The locale'),
-              // new InputArgument('bundle', InputArgument::OPTIONAL, 'The bundle name or directory where to load the messages'),
               new InputOption('prefix', null, InputOption::VALUE_REQUIRED, 'Override the default prefix', '__'),
               new InputOption('no-fill', null, InputOption::VALUE_NONE, 'Extract translation keys without filling in values'),
               new InputOption('format', null, InputOption::VALUE_REQUIRED, 'Override the default output format', 'po'),
@@ -70,36 +72,33 @@ final class TranslationExtractCommand extends Command
               new InputOption('sort', null, InputOption::VALUE_REQUIRED, 'Return list of messages sorted alphabetically'),
               new InputOption('as-tree', null, InputOption::VALUE_REQUIRED, 'Dump the messages as a tree-like structure: The given value defines the level where to switch to inline YAML'),
 
-              new InputOption('source', null, InputOption::VALUE_REQUIRED, 'Source path.'),
+              new InputArgument('source', InputArgument::REQUIRED, 'Source path.'),
               new InputOption('output', null, InputOption::VALUE_REQUIRED, 'Output path. Required if --force is specified.'),
+              new InputOption('fill-from-string-storage', null, InputOption::VALUE_NONE, 'Fill translations with values from string storage.'),
           ])
           ->setHelp(<<<'EOF'
 The <info>%command.name%</info> command extracts translation strings from templates
-of a given bundle or the default translations directory. It can display them or merge
+of a given module or theme or another path. It can display them or merge
 the new ones into the translation files.
 
 When new translation strings are found it can automatically add a prefix to the translation
 message. However, if the <comment>--no-fill</comment> option is used, the <comment>--prefix</comment>
 option has no effect, since the translation values are left empty.
 
-Example running against a Bundle (AcmeBundle)
+Example running against a module (my_module)
 
-  <info>php %command.full_name% --dump-messages en AcmeBundle</info>
-  <info>php %command.full_name% --force --prefix="new_" fr AcmeBundle</info>
+  <info>php %command.full_name% --dump-messages en module:my_module</info>
+  <info>php %command.full_name% --force --prefix="new_" fr module:my_module</info>
 
-Example running against default messages directory
+Example running against a theme (my_theme)
 
-  <info>php %command.full_name% --dump-messages en</info>
-  <info>php %command.full_name% --force --prefix="new_" fr</info>
+  <info>php %command.full_name% --dump-messages en theme:my_theme</info>
+  <info>php %command.full_name% --force --prefix="new_" fr theme:my_theme</info>
 
 You can sort the output with the <comment>--sort</> flag:
 
-    <info>php %command.full_name% --dump-messages --sort=asc en AcmeBundle</info>
-    <info>php %command.full_name% --force --sort=desc fr</info>
-
-You can dump a tree-like structure using the yaml format with <comment>--as-tree</> flag:
-
-    <info>php %command.full_name% --force --format=yaml --as-tree=3 en AcmeBundle</info>
+    <info>php %command.full_name% --dump-messages --sort=asc en …</info>
+    <info>php %command.full_name% --force --sort=desc fr …</info>
 
 EOF
           )
@@ -152,9 +151,17 @@ EOF
         $extractedCatalogue = $this->extractMessages($input->getArgument('locale'), $codePaths, $prefix);
 
         $io->comment('Loading translated messages...');
-        $currentCatalogue = true === $input->getOption('no-fill')
-          ? $extractedCatalogue
-          : $this->loadTranslatedMessages($extractedCatalogue);
+        $outputPath = $this->getOutputPath($input, $sourceInfo + [
+            'locale' => $input->getArgument('locale'),
+        ]);
+
+        $currentCatalogue = $this->loadCurrentMessages($input->getArgument('locale'), $outputPath);
+        if (true === $input->getOption('fill-from-string-storage')) {
+            // Merge in translations from string storage.
+            $currentCatalogue = new MergeOperation(
+                $this->loadTranslatedMessages($extractedCatalogue),
+                $currentCatalogue)->getResult();
+        }
 
         if (null !== $domain = $input->getOption('domain')) {
             if ('' === $domain) {
@@ -211,7 +218,7 @@ EOF
                     sort($list);
                 }
 
-                $io->section(\sprintf('Messages extracted for domain "<info>%s</info>" (%d message%s)', $domain, $domainMessagesCount, $domainMessagesCount > 1 ? 's' : ''));
+                $io->section(\sprintf('Messages extracted for context "<info>%s</info>" (%d message%s)', PoItem::formatContext($domain), $domainMessagesCount, $domainMessagesCount > 1 ? 's' : ''));
                 $io->listing($list);
 
                 $extractedMessagesCount += $domainMessagesCount;
@@ -238,9 +245,6 @@ EOF
                 $this->removeNoFillTranslations($operationResult);
             }
 
-            $outputPath = $this->getOutputPath($input, $sourceInfo + [
-                'locale' => $operationResult->getLocale(),
-            ]);
             $dumperOptions = [
                 'path' => dirname($outputPath),
                 'output_name' => basename($outputPath),
@@ -379,13 +383,40 @@ EOF
         return $filteredPaths;
     }
 
+    /**
+     * Load current messages from po file.
+     */
+    private function loadCurrentMessages(string $locale, string $path): MessageCatalogue
+    {
+        $currentCatalogue = new MessageCatalogue($locale);
+
+        if (!is_file($path)) {
+            return $currentCatalogue;
+        }
+
+        $this->reader->setURI($path);
+        $this->reader->open();
+        while ($item = $this->reader->readItem()) {
+            if (!empty($item->getTranslation())) {
+                $currentCatalogue->set(
+                    PoItem::joinStrings((array) $item->getSource()),
+                    PoItem::joinStrings((array) $item->getTranslation()),
+                    PoItem::fromContext($item->getContext()),
+                );
+            }
+        }
+        $this->reader->close();
+
+        return $currentCatalogue;
+    }
+
     private function loadTranslatedMessages(MessageCatalogue $extractedCatalogue): MessageCatalogue
     {
-        $currentCatalogue = new MessageCatalogue($extractedCatalogue->getLocale());
+        $translatedMessages = new MessageCatalogue($extractedCatalogue->getLocale());
 
         foreach ($extractedCatalogue->getDomains() as $domain) {
             $translations = $this->stringStorage->getTranslations([
-                'language' => $currentCatalogue->getLocale(),
+                'language' => $translatedMessages->getLocale(),
                 'context' => PoItem::formatContext($domain),
             ]);
             // Index by source
@@ -393,13 +424,13 @@ EOF
             foreach ($extractedCatalogue->all($domain) as $source => $_) {
                 if ($translation = ($translations[$source] ?? null)) {
                     if ($string = $translation->getString()) {
-                        $currentCatalogue->set($source, $string, $domain);
+                        $translatedMessages->set($source, $string, $domain);
                     }
                 }
             }
         }
 
-        return $currentCatalogue;
+        return $translatedMessages;
     }
 
     private function removeNoFillTranslations(MessageCatalogueInterface $operation): void
@@ -421,7 +452,11 @@ EOF
     private function getRootCodePaths(InputInterface $input): array
     {
         $info = [];
-        $source = $input->getOption('source');
+        $source = $input->getArgument('source');
+
+        if (empty($source)) {
+            throw new InvalidArgumentException('Argument "source" is required.');
+        }
 
         // Expand module and theme paths.
         $source = preg_replace_callback(
@@ -429,7 +464,13 @@ EOF
             function (array $matches) use (&$info): string {
                 $info[$matches[1]] = $matches[2];
 
-                return $this->extensionPathResolver->getPath($matches[1], $matches[2]);
+                $path = $this->extensionPathResolver->getPath($matches[1], $matches[2]);
+
+                if (empty($path)) {
+                    throw new InvalidArgumentException(sprintf('Invalid %s: %s', $matches[1], $matches[2]));
+                }
+
+                return $path;
             },
             $source,
         );

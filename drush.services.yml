@@ -2,10 +2,10 @@ services:
   drupal_translation_extractor.translation_extract:
     class: Drupal\drupal_translation_extractor\Command\TranslationExtractCommand
     arguments:
+      - "@drupal_translation_extractor.translation_writer"
+      - "@drupal_translation_extractor.translation_reader"
+      - "@drupal_translation_extractor.extractor"
       - "@extension.path.resolver"
       - "@locale.storage"
-      - "@drupal_translation_extractor.extractor"
-      - "@drupal_translation_extractor.translation_writer"
-      - "@Drupal\\drupal_translation_extractor\\Translation\\Dumper\\PoFileDumper"
     tags:
       - { name: console.command }

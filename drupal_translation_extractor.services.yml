@@ -38,6 +38,8 @@ services:
 
   Drupal\drupal_translation_extractor\Translation\Dumper\PoFileDumper:
 
+  Drupal\drupal_translation_extractor\Translation\Reader\PoTranslationReader:
+
   drupal_translation_extractor.translation_writer:
     class: Symfony\Component\Translation\Writer\TranslationWriter
     calls:
@@ -48,3 +50,6 @@ services:
             '@Drupal\drupal_translation_extractor\Translation\Dumper\PoFileDumper',
           ],
         ]
+
+  drupal_translation_extractor.translation_reader:
+    class: Drupal\Component\Gettext\PoStreamReader
