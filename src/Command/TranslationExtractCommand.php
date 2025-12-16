@@ -248,6 +248,7 @@ EOF
                 'xliff_version' => $xliffVersion,
                 'as_tree' => $input->getOption('as-tree'),
                 'inline' => $input->getOption('as-tree') ?? 0,
+                'empty_prefix' => $input->getOption('prefix'),
             ];
 
             $this->writer->write($operationResult, $format, $dumperOptions);

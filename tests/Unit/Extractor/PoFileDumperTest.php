@@ -64,6 +64,7 @@ final class PoFileDumperTest extends TestCase
         $dumper = new PoFileDumper();
         $output = $dumper->formatCatalogue($messages, '', [
             'project_name' => 'testFormatCatalog',
+            'empty_prefix' => '__',
         ]);
 
         $strings = [
@@ -77,6 +78,13 @@ final class PoFileDumperTest extends TestCase
                 'msgid_plural "Hello @count stars."',
                 'msgstr[0] "__Hello star."',
                 'msgstr[1] "__Hello @count stars."',
+            ]),
+
+            $this->block([
+                '#, fuzzy',
+                'msgctxt "the context"',
+                'msgid "t filter with options context"',
+                'msgstr "__t filter with options context"',
             ]),
         ];
         foreach ($strings as $string) {

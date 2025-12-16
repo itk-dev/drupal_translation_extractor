@@ -39,6 +39,8 @@ class PoFileDumper extends BasePoFileDumper
             $header->setProjectName($projectName);
         }
 
+        $emptyPrefix = $options['empty_prefix'] ?? null;
+
         $uri = tempnam(sys_get_temp_dir(), 'po_');
         $writer = new PoStreamWriter();
         $writer->setURI($uri);
@@ -47,6 +49,9 @@ class PoFileDumper extends BasePoFileDumper
         foreach ($messages->getDomains() as $domain) {
             foreach ($messages->all($domain) as $source => $translation) {
                 $item = new PoItem();
+                if (empty($translation) || ($emptyPrefix && str_starts_with($translation, $emptyPrefix))) {
+                    $item->setFuzzy();
+                }
                 $item->setContext(PoItem::formatContext($domain));
                 $source = PoItem::splitStrings($source);
                 $translation = PoItem::splitStrings($translation, $numberOfPlurals);

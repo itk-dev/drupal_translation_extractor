@@ -6,6 +6,27 @@ class PoItem extends \Drupal\Component\Gettext\PoItem
 {
     public const string NO_CONTEXT = '__no_context__';
 
+    private bool $fuzzy = false;
+
+    public function setFuzzy(bool $fuzzy = true): self
+    {
+        $this->fuzzy = $fuzzy;
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        $string = parent::__toString();
+
+        if ($this->fuzzy) {
+            // https://www.gnu.org/savannah-checkouts/gnu/gettext/manual/gettext.html#Fuzzy-Entries
+            $string = '#, fuzzy'."\n".$string;
+        }
+
+        return $string;
+    }
+
     public static function joinStrings(array $strings, string $prefix = ''): string
     {
         return implode(self::DELIMITER, array_map(fn (string $string) => $prefix.$string, $strings));
