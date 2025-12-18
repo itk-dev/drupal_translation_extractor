@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Drupal\drupal_translation_extractor\Test\Unit\Extractor;
+namespace Drupal\drupal_translation_extractor\Test\Unit\Twig\Translation\Extractor;
 
 use Drupal\Core\Template\TwigTransTokenParser;
-use Drupal\drupal_translation_extractor\ItkTranslationExtractorTwigExtension;
+use Drupal\drupal_translation_extractor\Test\Unit\AbstractTestCase;
 use Drupal\drupal_translation_extractor\Translation\Dumper\PoItem;
-use Drupal\drupal_translation_extractor\Translation\TwigExtractor;
-use PHPUnit\Framework\TestCase;
+use Drupal\drupal_translation_extractor\Twig\Extension\ItkTranslationExtractorTwigExtension;
+use Drupal\drupal_translation_extractor\Twig\Translation\Extractor\TwigExtractor;
 use Symfony\Component\Translation\MessageCatalogue;
 use Twig;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
-final class TwigExtractorTest extends TestCase
+final class TwigExtractorTest extends AbstractTestCase
 {
     public function testTransMethod(): void
     {
         $extractor = new TwigExtractor($this->twig());
         $resource = [
-            __DIR__.'/resources/templates/my_template.html.twig',
+            $this->getResourcePath('templates/my_template.html.twig'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
@@ -41,7 +41,7 @@ final class TwigExtractorTest extends TestCase
     {
         $extractor = new TwigExtractor($this->twig());
         $resource = [
-            __DIR__.'/resources/templates/my_template_drupal.html.twig',
+            $this->getResourcePath('templates/my_template_drupal.html.twig'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);

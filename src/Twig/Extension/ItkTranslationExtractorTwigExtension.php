@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Drupal\drupal_translation_extractor;
+namespace Drupal\drupal_translation_extractor\Twig\Extension;
 
-use Drupal\drupal_translation_extractor\NodeVisitor\TranslationNodeVisitor;
+use Drupal\drupal_translation_extractor\Twig\NodeVisitor\TranslationNodeVisitor;
 use Twig\Extension\AbstractExtension;
 
 /**

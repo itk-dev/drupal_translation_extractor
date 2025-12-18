@@ -12,9 +12,9 @@ services:
         - '@Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TransMethodVisitor'
         - '@Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TranslatableMarkupVisitor'
 
-  Drupal\drupal_translation_extractor\Translation\TwigExtractor:
+  Drupal\drupal_translation_extractor\Twig\Translation\Extractor\TwigExtractor:
 
-  Drupal\drupal_translation_extractor\ItkTranslationExtractorTwigExtension:
+  Drupal\drupal_translation_extractor\Twig\Extension\ItkTranslationExtractorTwigExtension:
     tags:
       - { name: twig.extension }
 
@@ -32,7 +32,7 @@ services:
           "addExtractor",
           [
             "twig",
-            '@Drupal\drupal_translation_extractor\Translation\TwigExtractor',
+            '@Drupal\drupal_translation_extractor\Twig\Translation\Extractor\TwigExtractor',
           ],
         ]
 

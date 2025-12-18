@@ -1,7 +1,0 @@
-<?php
-
-function my_theme() {
-  t('My theme');
-  t('My theme', [], ['context' => 'the theme context']);
-  t('My theme', options: ['context' => 'another theme context']);
-}

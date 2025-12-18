@@ -1,8 +1,7 @@
 <?php
 
-namespace Drupal\drupal_translation_extractor\NodeVisitor;
+namespace Drupal\drupal_translation_extractor\Twig\NodeVisitor;
 
-use Drupal\Core\Template\TwigNodeTrans;
 use Drupal\Core\Template\TwigNodeTrans as TransNode;
 use Drupal\drupal_translation_extractor\Translation\Dumper\PoItem;
 use Twig\Environment;
@@ -66,18 +65,6 @@ final class TranslationNodeVisitor implements NodeVisitorInterface
                 $this->getReadDomainFromArguments($node->getNode('arguments'), 1),
             ];
         // {{ t('…') }} is not supported in Drupal.
-        // } elseif (
-        //     $node instanceof FunctionExpression
-        //     && 't' === $node->getAttribute('name')
-        // ) {
-        //     $nodeArguments = $node->getNode('arguments');
-        //
-        //     if ($nodeArguments->getIterator()->current() instanceof ConstantExpression) {
-        //         $this->messages[] = [
-        //             $this->getReadMessageFromArguments($nodeArguments, 0),
-        //             $this->getReadDomainFromArguments($nodeArguments, 2),
-        //         ];
-        //     }
         } elseif ($node instanceof TransNode) {
             // extract trans nodes
             $body = $node->getNode('body');
@@ -191,7 +178,7 @@ final class TranslationNodeVisitor implements NodeVisitorInterface
      *
      * Return type has been added.
      *
-     * @see TwigNodeTrans::compileString()
+     * @see TransNode::compileString()
      */
     private function compileString(Node $body): array
     {

@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Drupal\drupal_translation_extractor\Test\Unit\Extractor;
+namespace Drupal\drupal_translation_extractor\Test\Unit\Translation\Dumper;
 
 use Drupal\drupal_translation_extractor\Test\Unit\AbstractTestCase;
 use Drupal\drupal_translation_extractor\Translation\Dumper\PoFileDumper;
-use Drupal\drupal_translation_extractor\Translation\TwigExtractor;
+use Drupal\drupal_translation_extractor\Twig\Translation\Extractor\TwigExtractor;
 use Symfony\Component\Translation\MessageCatalogue;
 
 final class PoFileDumperTest extends AbstractTestCase
 {
     public function testFormatCatalogDa(): void
     {
-        $resource = __DIR__.'/resources/';
+        $resource = $this->getResourcePath();
         $locale = 'da';
 
         $extractor = new TwigExtractor($this->createTwig());
@@ -48,7 +48,7 @@ final class PoFileDumperTest extends AbstractTestCase
 
     public function testFormatCatalogDaWithPrefix(): void
     {
-        $resource = __DIR__.'/resources/';
+        $resource = $this->getResourcePath();
         $locale = 'da';
 
         $extractor = new TwigExtractor($this->createTwig());
@@ -89,7 +89,7 @@ final class PoFileDumperTest extends AbstractTestCase
 
     public function testFormatCatalogPl(): void
     {
-        $resource = __DIR__.'/resources/';
+        $resource = $this->getResourcePath();
         $locale = 'pl';
 
         $extractor = new TwigExtractor($this->createTwig());

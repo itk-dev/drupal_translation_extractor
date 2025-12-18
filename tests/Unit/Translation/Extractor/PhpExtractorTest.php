@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Drupal\drupal_translation_extractor\Test\Unit\Extractor;
+namespace Drupal\drupal_translation_extractor\Test\Unit\Translation\Extractor;
 
+use Drupal\drupal_translation_extractor\Test\Unit\AbstractTestCase;
 use Drupal\drupal_translation_extractor\Translation\Dumper\PoItem;
 use Drupal\drupal_translation_extractor\Translation\Extractor\PhpExtractor;
 use Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TranslatableMarkupVisitor;
 use Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TransMethodVisitor;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\Translation\MessageCatalogue;
 
-final class PhpExtractorTest extends TestCase
+final class PhpExtractorTest extends AbstractTestCase
 {
     public function testTransMethod(): void
     {
@@ -20,7 +20,7 @@ final class PhpExtractorTest extends TestCase
         ];
         $extractor = new PhpExtractor($visitors);
         $resource = [
-            __DIR__.'/resources/src/MyClass.php',
+            $this->getResourcePath('src/MyClass.php'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
@@ -44,7 +44,7 @@ final class PhpExtractorTest extends TestCase
         ];
         $extractor = new PhpExtractor($visitors);
         $resource = [
-            __DIR__.'/resources/src/MyClassDrupal.php',
+            $this->getResourcePath('src/MyClassDrupal.php'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
@@ -67,7 +67,7 @@ final class PhpExtractorTest extends TestCase
             new TransMethodVisitor(),
         ];
         $extractor = new PhpExtractor($visitors);
-        $resource = __DIR__.'/resources/';
+        $resource = $this->getResourcePath();
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
         $extractor->extract($resource, $messages);
@@ -83,7 +83,7 @@ final class PhpExtractorTest extends TestCase
             new TranslatableMarkupVisitor(),
         ];
         $resource = [
-            __DIR__.'/resources/src/MyClass.php',
+            $this->getResourcePath('src/MyClass.php'),
         ];
         $locale = 'da';
 
@@ -108,7 +108,7 @@ final class PhpExtractorTest extends TestCase
             new TranslatableMarkupVisitor(),
         ];
         $resource = [
-            __DIR__.'/resources/src/MyClassDrupal.php',
+            $this->getResourcePath('src/MyClassDrupal.php'),
         ];
         $locale = 'da';
 

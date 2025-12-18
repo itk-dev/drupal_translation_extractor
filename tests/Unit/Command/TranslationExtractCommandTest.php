@@ -10,7 +10,7 @@ use Drupal\drupal_translation_extractor\Translation\Dumper\PoFileDumper;
 use Drupal\drupal_translation_extractor\Translation\Extractor\PhpExtractor;
 use Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TranslatableMarkupVisitor;
 use Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TransMethodVisitor;
-use Drupal\drupal_translation_extractor\Translation\TwigExtractor;
+use Drupal\drupal_translation_extractor\Twig\Translation\Extractor\TwigExtractor;
 use Drupal\locale\StringStorageInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -25,7 +25,7 @@ final class TranslationExtractCommandTest extends AbstractTestCase
         $command = $this->createCommand();
         $input = new ArrayInput([
             'locale' => 'da',
-            'source' => __DIR__.'/resources/translations/',
+            'source' => $this->getResourcePath('translations'),
             '--dump-messages' => true,
         ]);
         $output = new BufferedOutput();
@@ -42,11 +42,11 @@ final class TranslationExtractCommandTest extends AbstractTestCase
         $command = $this->createCommand();
         $input = new ArrayInput([
             'locale' => 'da',
-            'source' => __DIR__.'/resources/templates/',
+            'source' => $this->getResourcePath('templates/'),
             '--force' => true,
             '--output' => $outputPath,
         ]);
-        $expectedPath = __DIR__.'/resources/expected/'.__FUNCTION__.'.da.po';
+        $expectedPath = $this->getResourcePath('expected/'.__FUNCTION__.'.da.po');
 
         $output = new BufferedOutput();
         $result = $command->run($input, $output);
