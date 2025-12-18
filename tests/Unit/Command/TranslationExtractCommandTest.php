@@ -49,12 +49,10 @@ final class TranslationExtractCommandTest extends TestCase
         $twig = new Environment(new \Twig\Loader\FilesystemLoader());
         $extractor->addExtractor('twig', new \Drupal\drupal_translation_extractor\Translation\TwigExtractor($twig));
 
-        $extensionPathResolver = new class extends ExtensionPathResolver {
-            public function __construct()
-            {
-            }
-        };
+        $extensionPathResolver = $this->createMock(ExtensionPathResolver::class);
+
         $stringStorage = $this->createStringStorage();
+
         $command = new TranslationExtractCommand($writer, $reader, $extractor, $extensionPathResolver, $stringStorage);
 
         return $command;
