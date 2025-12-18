@@ -45,7 +45,7 @@ final class TranslationExtractCommand extends Command
 
     public function __construct(
         private readonly TranslationWriterInterface $writer,
-        private PoStreamReader $reader,
+        private readonly PoStreamReader $reader,
         private readonly ExtractorInterface $extractor,
         private readonly ExtensionPathResolver $extensionPathResolver,
         private readonly StringStorageInterface $stringStorage,
@@ -114,13 +114,13 @@ EOF
         if (true !== $input->getOption('force') && true !== $input->getOption('dump-messages')) {
             $errorIo->error('You must choose one of --force or --dump-messages');
 
-            return 1;
+            return self::FAILURE;
         }
         $outputPath = $input->getOption('output');
         if (null === $outputPath && true === $input->getOption('force')) {
             $errorIo->error('--output is required when --force is specified');
 
-            return 1;
+            return self::FAILURE;
         }
 
         $format = $input->getOption('format');
@@ -135,7 +135,7 @@ EOF
         if (!\in_array($format, $supportedFormats, true)) {
             $errorIo->error(['Wrong output format', 'Supported formats are: '.implode(', ', $supportedFormats).', xlf12 and xlf20.']);
 
-            return 1;
+            return self::FAILURE;
         }
 
         // Define Root Paths
@@ -167,6 +167,7 @@ EOF
             if ('' === $domain) {
                 $domain = PoItem::NO_CONTEXT;
             }
+            assert($currentCatalogue instanceof MessageCatalogue);
             $currentCatalogue = $this->filterCatalogue($currentCatalogue, $domain);
             $extractedCatalogue = $this->filterCatalogue($extractedCatalogue, $domain);
         }
@@ -180,7 +181,7 @@ EOF
         if (!\count($operation->getDomains())) {
             $errorIo->warning('No translation messages were found.');
 
-            return 0;
+            return self::SUCCESS;
         }
 
         $resultMessage = 'Translation files were successfully updated';
@@ -192,7 +193,7 @@ EOF
             if (!\in_array($sort, self::SORT_ORDERS, true)) {
                 $errorIo->error(['Wrong sort order', 'Supported formats are: '.implode(', ', self::SORT_ORDERS).'.']);
 
-                return 1;
+                return self::FAILURE;
             }
         }
 
@@ -264,7 +265,7 @@ EOF
 
         $io->success($resultMessage.'.');
 
-        return 0;
+        return self::SUCCESS;
     }
 
     private function filterCatalogue(MessageCatalogue $catalogue, string $domain): MessageCatalogue
@@ -469,18 +470,23 @@ EOF
         $source = preg_replace_callback(
             '/(module|theme):([a-z0-9_]+)/i',
             function (array $matches) use (&$info): string {
-                $info[$matches[1]] = $matches[2];
+                [, $type, $name] = $matches;
+                $info[$type] = $name;
 
-                $path = $this->extensionPathResolver->getPath($matches[1], $matches[2]);
+                $path = $this->extensionPathResolver->getPath($type, $name);
 
                 if (empty($path)) {
-                    throw new InvalidArgumentException(sprintf('Invalid %s: %s', $matches[1], $matches[2]));
+                    throw new InvalidArgumentException(sprintf('Invalid %s: %s', $type, $name));
                 }
 
                 return $path;
             },
             $source,
         );
+
+        if (!file_exists($source)) {
+            throw new InvalidArgumentException(sprintf('Source %s does not exist', $source));
+        }
 
         $info['source'] = $source;
 
@@ -503,7 +509,7 @@ EOF
         return preg_replace_callback(
             '/%([a-z0-9_]+)/i',
             fn (array $matches) => $sourceInfo[$matches[1]] ?? $matches[0],
-            $output,
+            (string) $output,
         );
     }
 }

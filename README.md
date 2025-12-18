@@ -32,23 +32,25 @@ always write only existing translations.
 
 </details>
 
-Two new options have been added:
+A new argument has been added:
 
-`--source` The source path to extract translations from. For convenience, `module:«name»` and `theme:«name»` can be used
-in the value and will be expanded to the full path to the module and/or theme respectively, i.e. `--source
-module:my_custom_module` will be converted to `--source modules/custom/my_custom_module`, say.
+`source` The source path to extract translations from. For convenience, `module:«name»` and `theme:«name»` can be used
+in the value and will be expanded to the full path to the module and/or theme respectively, i.e.
+`module:my_custom_module` will be expanded to `web/modules/custom/my_custom_module`, say.
+
+A new option has been added:
 
 `--output` The output path. The value can use these placeholders:
 
-| Name            | Value                                                       |
-|-----------------|-------------------------------------------------------------|
-| `%locale`       | The locale being extracted                                  |
-| `%module`       | The module name if specified using `module:…` in `--source` |
-| `%source_dir`   | The directory of `%source`                                  |
-| `%source`       | The expanded value of `--source`                            |
-| `%theme`        | The theme name if specified using `theme:…` in `--source`   |
-| `%language`[^1] | Alias for `%locale`                                         |
-| `%project` [^1] | Alias for either `%module` or `%theme` (whichever is set)   |
+| Name            | Value                                                     |
+|-----------------|-----------------------------------------------------------|
+| `%locale`       | The locale being extracted                                |
+| `%module`       | The module name if specified using `module:…` in `source` |
+| `%source_dir`   | The directory of `%source`                                |
+| `%source`       | The expanded value of `source`                            |
+| `%theme`        | The theme name if specified using `theme:…` in `source`   |
+| `%language`[^1] | Alias for `%locale`                                       |
+| `%project` [^1] | Alias for either `%module` or `%theme` (whichever is set) |
 
 [^1]: Matching placeholders used the Locale module (cf.
     [locale.api.php](https://git.drupalcode.org/project/drupal/-/blob/11.x/core/modules/locale/locale.api.php)).
@@ -58,7 +60,7 @@ module:my_custom_module` will be converted to `--source modules/custom/my_custom
 Running
 
 ``` shell
-drush drupal_translation_extractor:translation:extract da --dump-messages --force --source module:my_modules --output=%source/translation/%module.%locale.po
+drush drupal_translation_extractor:translation:extract da --dump-messages --force module:my_modules --output=%source/translation/%module.%locale.po
 ```
 
 will find translations in all PHP and Twig files in the `web/modules/custom/my_module` directory and write the result to

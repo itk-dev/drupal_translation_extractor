@@ -1,0 +1,38 @@
+name: Project
+
+env:
+  COMPOSE_USER: root
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  code-analysis:
+    name: Code analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: go-task/setup-task@v1
+
+      - run: |
+          task composer -- install
+
+      - run: |
+          task code-analysis
+
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: go-task/setup-task@v1
+
+      - run: |
+          task composer -- install
+
+      - run: |
+          task test
