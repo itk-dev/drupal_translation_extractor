@@ -304,7 +304,14 @@ EOF
     {
         $sortedCatalogue = new MessageCatalogue($catalogue->getLocale());
 
-        foreach ($catalogue->getDomains() as $domain) {
+        $domains = $catalogue->getDomains();
+        if (self::DESC === $sort) {
+            rsort($domains);
+        } elseif (self::ASC === $sort) {
+            sort($domains);
+        }
+
+        foreach ($domains as $domain) {
             // extract intl-icu messages only
             $intlDomain = $domain.MessageCatalogueInterface::INTL_DOMAIN_SUFFIX;
             if ($intlMessages = $catalogue->all($intlDomain)) {
