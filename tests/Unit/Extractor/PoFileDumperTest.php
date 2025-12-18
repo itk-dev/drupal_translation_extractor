@@ -4,24 +4,19 @@ declare(strict_types=1);
 
 namespace Drupal\drupal_translation_extractor\Test\Unit\Extractor;
 
-use Drupal\Core\Template\TwigTransTokenParser;
-use Drupal\drupal_translation_extractor\ItkTranslationExtractorTwigExtension;
+use Drupal\drupal_translation_extractor\Test\Unit\AbstractTestCase;
 use Drupal\drupal_translation_extractor\Translation\Dumper\PoFileDumper;
 use Drupal\drupal_translation_extractor\Translation\TwigExtractor;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\Translation\MessageCatalogue;
-use Twig;
-use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
 
-final class PoFileDumperTest extends TestCase
+final class PoFileDumperTest extends AbstractTestCase
 {
     public function testFormatCatalogDa(): void
     {
         $resource = __DIR__.'/resources/';
         $locale = 'da';
 
-        $extractor = new TwigExtractor($this->twig());
+        $extractor = new TwigExtractor($this->createTwig());
         $messages = new MessageCatalogue($locale);
         $extractor->extract($resource, $messages);
 
@@ -56,7 +51,7 @@ final class PoFileDumperTest extends TestCase
         $resource = __DIR__.'/resources/';
         $locale = 'da';
 
-        $extractor = new TwigExtractor($this->twig());
+        $extractor = new TwigExtractor($this->createTwig());
         $messages = new MessageCatalogue($locale);
         $extractor->setPrefix('__');
         $extractor->extract($resource, $messages);
@@ -97,7 +92,7 @@ final class PoFileDumperTest extends TestCase
         $resource = __DIR__.'/resources/';
         $locale = 'pl';
 
-        $extractor = new TwigExtractor($this->twig());
+        $extractor = new TwigExtractor($this->createTwig());
         $messages = new MessageCatalogue($locale);
         $extractor->extract($resource, $messages);
 
@@ -136,17 +131,5 @@ final class PoFileDumperTest extends TestCase
     private function block(array $strings): string
     {
         return implode('', array_map($this->line(...), $strings))."\n";
-    }
-
-    private function twig(): Environment
-    {
-        $twig = new Environment(new FilesystemLoader());
-        $trans = fn () => null;
-        $twig->addFilter(new Twig\TwigFilter('t', $trans));
-        $twig->addFilter(new Twig\TwigFilter('trans', $trans));
-        $twig->addExtension(new ItkTranslationExtractorTwigExtension());
-        $twig->addTokenParser(new TwigTransTokenParser());
-
-        return $twig;
     }
 }

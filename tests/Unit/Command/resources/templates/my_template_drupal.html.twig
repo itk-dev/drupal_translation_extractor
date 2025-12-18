@@ -1,0 +1,23 @@
+{# https://www.drupal.org/docs/8/api/translation-api/overview#s-translation-in-twig-templates #}
+{% set count = 1 %}
+{% trans %}
+  Hello star.
+{% plural count %}
+  Hello {{ count }} stars.
+{% endtrans %}
+
+{# The `{{ count }}` above seems to be translated to `@count`, i.e. this is the same as above: #}
+{% set count = 1 %}
+{% trans %}
+  Hello star.
+{% plural count %}
+  Hello @count stars.
+{% endtrans %}
+
+{#
+{% trans with {context: 'Long month name', langcode: 'hu'} %}
+  May
+{% endtrans %}
+
+{% trans 'May' with {context: 'Long month name', langcode: 'hu'} %}
+#}

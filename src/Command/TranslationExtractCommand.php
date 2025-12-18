@@ -469,18 +469,23 @@ EOF
         $source = preg_replace_callback(
             '/(module|theme):([a-z0-9_]+)/i',
             function (array $matches) use (&$info): string {
-                $info[$matches[1]] = $matches[2];
+                [, $type, $name] = $matches;
+                $info[$type] = $name;
 
-                $path = $this->extensionPathResolver->getPath($matches[1], $matches[2]);
+                $path = $this->extensionPathResolver->getPath($type, $name);
 
                 if (empty($path)) {
-                    throw new InvalidArgumentException(sprintf('Invalid %s: %s', $matches[1], $matches[2]));
+                    throw new InvalidArgumentException(sprintf('Invalid %s: %s', $type, $name));
                 }
 
                 return $path;
             },
             $source,
         );
+
+        if (!file_exists($source)) {
+            throw new InvalidArgumentException(sprintf('Source %s does not exist', $source));
+        }
 
         $info['source'] = $source;
 
