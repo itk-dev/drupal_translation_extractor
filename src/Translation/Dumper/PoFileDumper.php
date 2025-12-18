@@ -49,12 +49,14 @@ class PoFileDumper extends BasePoFileDumper
         foreach ($messages->getDomains() as $domain) {
             foreach ($messages->all($domain) as $source => $translation) {
                 $item = new PoItem();
-                if (empty($translation) || ($emptyPrefix && str_starts_with($translation, $emptyPrefix))) {
-                    $item->setFuzzy();
-                }
                 $item->setContext(PoItem::formatContext($domain));
                 $source = PoItem::splitStrings($source);
-                $translation = PoItem::splitStrings($translation, $numberOfPlurals);
+                $translation = PoItem::splitStrings($translation, count($source) > 1 ? $numberOfPlurals : 1);
+                foreach ($translation as $string) {
+                    if (empty($string) || ($emptyPrefix && str_starts_with($string, $emptyPrefix))) {
+                        $item->setFuzzy();
+                    }
+                }
                 if (count($source) > 1) {
                     $item->setPlural(true);
                     $item->setSource($source);
