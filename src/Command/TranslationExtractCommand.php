@@ -167,6 +167,7 @@ EOF
             if ('' === $domain) {
                 $domain = PoItem::NO_CONTEXT;
             }
+            assert($currentCatalogue instanceof MessageCatalogue);
             $currentCatalogue = $this->filterCatalogue($currentCatalogue, $domain);
             $extractedCatalogue = $this->filterCatalogue($extractedCatalogue, $domain);
         }

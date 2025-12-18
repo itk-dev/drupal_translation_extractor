@@ -4,7 +4,9 @@ parameters:
 		- src
 		- tests
 	excludePaths:
-		- tests/Unit/Extractor/resources/
+		- tests/Unit/*/resources/*
+
+	treatPhpDocTypesAsCertain: false
 
 	ignoreErrors:
 		- '#^Method .+ has parameter .+ with no value type specified in iterable type array\.$#'
