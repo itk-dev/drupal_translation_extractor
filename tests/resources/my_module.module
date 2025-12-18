@@ -1,0 +1,7 @@
+<?php
+
+function my_module() {
+  t('My module');
+  t('My module', [], ['context' => 'the module context']);
+  t('My module', options: ['context' => 'another module context']);
+}

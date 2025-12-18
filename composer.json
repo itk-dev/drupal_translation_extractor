@@ -1,0 +1,32 @@
+{
+    "name": "itk-dev/drupal_translation_extractor",
+    "description": "drupal_translation_extractor",
+    "license": "MIT",
+    "type": "drupal-module",
+    "require": {
+        "php": "^8.4",
+        "drupal/core": "^10 || ^11",
+        "symfony/translation": "^6 || ^7 || ^8",
+        "symfony/twig-bridge": "^6 || ^7 || ^8"
+    },
+    "require-dev": {
+        "ergebnis/composer-normalize": "^2.48",
+        "friendsofphp/php-cs-fixer": "^3.91",
+        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^12.5",
+        "vincentlanglet/twig-cs-fixer": "^3.11"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Drupal\\drupal_translation_extractor\\": "src/",
+            "Drupal\\drupal_translation_extractor\\Test\\": "tests/",
+            "Drupal\\locale\\": "vendor/drupal/core/modules/locale/src/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "drupal/core-composer-scaffold": false,
+            "ergebnis/composer-normalize": true
+        }
+    }
+}

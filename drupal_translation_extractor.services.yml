@@ -1,0 +1,55 @@
+services:
+  _defaults:
+    autowire: true
+
+  Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TransMethodVisitor:
+
+  Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TranslatableMarkupVisitor:
+
+  Drupal\drupal_translation_extractor\Translation\Extractor\PhpExtractor:
+    arguments:
+      $visitors:
+        - '@Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TransMethodVisitor'
+        - '@Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TranslatableMarkupVisitor'
+
+  Drupal\drupal_translation_extractor\Twig\Translation\Extractor\TwigExtractor:
+
+  Drupal\drupal_translation_extractor\Twig\Extension\ItkTranslationExtractorTwigExtension:
+    tags:
+      - { name: twig.extension }
+
+  drupal_translation_extractor.extractor:
+    class: Symfony\Component\Translation\Extractor\ChainExtractor
+    calls:
+      - [
+          "addExtractor",
+          [
+            "php",
+            '@Drupal\drupal_translation_extractor\Translation\Extractor\PhpExtractor',
+          ],
+        ]
+      - [
+          "addExtractor",
+          [
+            "twig",
+            '@Drupal\drupal_translation_extractor\Twig\Translation\Extractor\TwigExtractor',
+          ],
+        ]
+
+  Drupal\drupal_translation_extractor\Translation\Dumper\PoFileDumper:
+
+  Drupal\drupal_translation_extractor\Translation\Reader\PoTranslationReader:
+
+  drupal_translation_extractor.translation_writer:
+    class: Symfony\Component\Translation\Writer\TranslationWriter
+    calls:
+      - [
+          "addDumper",
+          [
+            "po",
+            '@Drupal\drupal_translation_extractor\Translation\Dumper\PoFileDumper',
+          ],
+        ]
+
+  drupal_translation_extractor.translation_reader:
+    class: Drupal\Component\Gettext\PoStreamReader

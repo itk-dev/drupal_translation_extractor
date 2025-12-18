@@ -1,0 +1,58 @@
+# Danish translation of 
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2025-12-18 13:46+0100\n"
+"PO-Revision-Date: 2025-12-18 13:46+0100\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: da\n"
+
+#, fuzzy
+msgid "Hello star."
+msgid_plural "Hello @count stars."
+msgstr[0] "__Hello star."
+msgstr[1] "__Hello @count stars."
+
+#, fuzzy
+msgid "t filter"
+msgstr "__t filter"
+
+#, fuzzy
+msgid "trans filter"
+msgstr "__trans filter"
+
+#, fuzzy
+msgid "trans tag"
+msgstr "__trans tag"
+
+#, fuzzy
+msgctxt "the context"
+msgid "t filter with options context"
+msgstr "__t filter with options context"
+
+#, fuzzy
+msgctxt "the context"
+msgid "trans filter with options context"
+msgstr "__trans filter with options context"
+
+#, fuzzy
+msgctxt "the context"
+msgid "trans tag with context"
+msgstr "__trans tag with context"
+
+#, fuzzy
+msgctxt "another context"
+msgid "t filter with context"
+msgstr "__t filter with context"
+
+#, fuzzy
+msgctxt "another context"
+msgid "trans filter with context"
+msgstr "__trans filter with context"
+

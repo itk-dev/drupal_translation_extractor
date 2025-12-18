@@ -1,0 +1,7 @@
+<?php
+
+function my_module_install() {
+  t('My module install');
+  t('My module install', [], ['context' => 'the module install context']);
+  t('My module install', options: ['context' => 'another module install context']);
+}
