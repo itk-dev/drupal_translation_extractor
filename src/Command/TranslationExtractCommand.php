@@ -75,6 +75,7 @@ final class TranslationExtractCommand extends Command
               new InputArgument('source', InputArgument::REQUIRED, 'Source path.'),
               new InputOption('output', null, InputOption::VALUE_REQUIRED, 'Output path. Required if --force is specified.'),
               new InputOption('fill-from-string-storage', null, InputOption::VALUE_NONE, 'Fill translations with values from string storage.'),
+              new InputOption('project-name', null, InputOption::VALUE_REQUIRED, 'Project name. If not set, a project name will be computed based on the source.'),
           ])
           ->setHelp(<<<'EOF'
 The <info>%command.name%</info> command extracts translation strings from templates
@@ -246,6 +247,17 @@ EOF
                 $this->removeNoFillTranslations($operationResult);
             }
 
+            $projectName = trim((string) $input->getOption('project-name'));
+            if (empty($projectName)) {
+                if (isset($sourceInfo['module'])) {
+                    $projectName = 'module '.$sourceInfo['module'];
+                } elseif (isset($sourceInfo['theme'])) {
+                    $projectName = 'theme '.$sourceInfo['theme'];
+                } elseif (isset($sourceInfo['source'])) {
+                    $projectName = $sourceInfo['source'];
+                }
+            }
+
             $dumperOptions = [
                 'path' => dirname($outputPath),
                 'output_name' => basename($outputPath),
@@ -254,6 +266,7 @@ EOF
                 'as_tree' => $input->getOption('as-tree'),
                 'inline' => $input->getOption('as-tree') ?? 0,
                 'empty_prefix' => $input->getOption('prefix'),
+                'project_name' => $projectName,
             ];
 
             $this->writer->write($operationResult, $format, $dumperOptions);
