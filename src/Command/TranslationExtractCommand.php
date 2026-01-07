@@ -187,8 +187,6 @@ EOF
 
         $resultMessage = 'Translation files were successfully updated';
 
-        // $operation->moveMessagesToIntlDomainsIfPossible('new');
-
         if ($sort = $input->getOption('sort')) {
             $sort = strtolower($sort);
             if (!\in_array($sort, self::SORT_ORDERS, true)) {
