@@ -39,10 +39,11 @@ abstract class AbstractTestCase extends TestCase
         $actual = trim((string) $actual);
 
         if ($ignoreHeader) {
-            if (false !== $index = strpos($expected, "\n\n")) {
+            // Remove content from start of file to first blank line.
+            if (false !== $index = strpos($expected, PHP_EOL.PHP_EOL)) {
                 $expected = substr($expected, $index);
             }
-            if (false !== $index = strpos($actual, "\n\n")) {
+            if (false !== $index = strpos($actual, PHP_EOL.PHP_EOL)) {
                 $actual = substr($actual, $index);
             }
         }

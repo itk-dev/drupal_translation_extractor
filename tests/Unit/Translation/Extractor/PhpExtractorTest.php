@@ -15,15 +15,15 @@ final class PhpExtractorTest extends AbstractTestCase
 {
     public function testTransMethod(): void
     {
-        $visitors = [
-            new TransMethodVisitor(),
-        ];
-        $extractor = new PhpExtractor($visitors);
         $resource = [
             $this->getResourcePath('src/MyClass.php'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
+
+        $extractor = $this->createExtractor(visitors: [
+            new TransMethodVisitor(),
+        ]);
         $extractor->extract($resource, $messages);
 
         $domains = $messages->getDomains();
@@ -39,15 +39,15 @@ final class PhpExtractorTest extends AbstractTestCase
 
     public function testTransMethodDrupal(): void
     {
-        $visitors = [
-            new TransMethodVisitor(),
-        ];
-        $extractor = new PhpExtractor($visitors);
         $resource = [
             $this->getResourcePath('src/MyClassDrupal.php'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
+
+        $extractor = $this->createExtractor(visitors: [
+            new TransMethodVisitor(),
+        ]);
         $extractor->extract($resource, $messages);
 
         $domains = $messages->getDomains();
@@ -63,13 +63,13 @@ final class PhpExtractorTest extends AbstractTestCase
 
     public function testTransMethodDrupalModule(): void
     {
-        $visitors = [
-            new TransMethodVisitor(),
-        ];
-        $extractor = new PhpExtractor($visitors);
         $resource = $this->getResourcePath();
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
+
+        $extractor = $this->createExtractor(visitors: [
+            new TransMethodVisitor(),
+        ]);
         $extractor->extract($resource, $messages);
 
         $domains = $messages->getDomains();
@@ -79,16 +79,15 @@ final class PhpExtractorTest extends AbstractTestCase
 
     public function testTranslatableMarkup(): void
     {
-        $visitors = [
-            new TranslatableMarkupVisitor(),
-        ];
         $resource = [
             $this->getResourcePath('src/MyClass.php'),
         ];
         $locale = 'da';
-
-        $extractor = new PhpExtractor($visitors);
         $messages = new MessageCatalogue($locale);
+
+        $extractor = $this->createExtractor(visitors: [
+            new TranslatableMarkupVisitor(),
+        ]);
         $extractor->extract($resource, $messages);
 
         $domains = $messages->getDomains();
@@ -104,16 +103,17 @@ final class PhpExtractorTest extends AbstractTestCase
 
     public function testTranslatableMarkupDrupal(): void
     {
-        $visitors = [
-            new TranslatableMarkupVisitor(),
-        ];
         $resource = [
             $this->getResourcePath('src/MyClassDrupal.php'),
         ];
         $locale = 'da';
-
-        $extractor = new PhpExtractor($visitors);
         $messages = new MessageCatalogue($locale);
+
+        $extractor = $this->createExtractor(
+            visitors: [
+                new TranslatableMarkupVisitor(),
+            ]
+        );
         $extractor->extract($resource, $messages);
 
         $domains = $messages->getDomains();
@@ -125,5 +125,10 @@ final class PhpExtractorTest extends AbstractTestCase
         $this->assertCount(1, $messages->all('the context'));
         $this->assertContains('another context', $domains);
         $this->assertCount(1, $messages->all('another context'));
+    }
+
+    private function createExtractor(array $visitors): PhpExtractor
+    {
+        return new PhpExtractor(visitors: $visitors);
     }
 }

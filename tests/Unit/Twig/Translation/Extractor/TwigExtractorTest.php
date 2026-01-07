@@ -4,26 +4,22 @@ declare(strict_types=1);
 
 namespace Drupal\drupal_translation_extractor\Test\Unit\Twig\Translation\Extractor;
 
-use Drupal\Core\Template\TwigTransTokenParser;
 use Drupal\drupal_translation_extractor\Test\Unit\AbstractTestCase;
 use Drupal\drupal_translation_extractor\Translation\Dumper\PoItem;
-use Drupal\drupal_translation_extractor\Twig\Extension\ItkTranslationExtractorTwigExtension;
 use Drupal\drupal_translation_extractor\Twig\Translation\Extractor\TwigExtractor;
 use Symfony\Component\Translation\MessageCatalogue;
-use Twig;
-use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
 
 final class TwigExtractorTest extends AbstractTestCase
 {
     public function testTransMethod(): void
     {
-        $extractor = new TwigExtractor($this->twig());
         $resource = [
             $this->getResourcePath('templates/my_template.html.twig'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
+
+        $extractor = $this->createExtractor();
         $extractor->extract($resource, $messages);
 
         $domains = $messages->getDomains();
@@ -39,12 +35,13 @@ final class TwigExtractorTest extends AbstractTestCase
 
     public function testDrupalTransMethod(): void
     {
-        $extractor = new TwigExtractor($this->twig());
         $resource = [
             $this->getResourcePath('templates/my_template_drupal.html.twig'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
+
+        $extractor = $this->createExtractor();
         $extractor->extract($resource, $messages);
 
         $domains = $messages->getDomains();
@@ -52,15 +49,8 @@ final class TwigExtractorTest extends AbstractTestCase
         $this->assertContains(PoItem::NO_CONTEXT, $domains);
     }
 
-    private function twig(): Environment
+    private function createExtractor(): TwigExtractor
     {
-        $twig = new Environment(new FilesystemLoader());
-        $trans = fn () => null;
-        $twig->addFilter(new Twig\TwigFilter('t', $trans));
-        $twig->addFilter(new Twig\TwigFilter('trans', $trans));
-        $twig->addExtension(new ItkTranslationExtractorTwigExtension());
-        $twig->addTokenParser(new TwigTransTokenParser());
-
-        return $twig;
+        return new TwigExtractor($this->createTwig());
     }
 }
