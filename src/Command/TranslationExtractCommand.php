@@ -159,9 +159,9 @@ EOF
         $currentCatalogue = $this->loadCurrentMessages($input->getArgument('locale'), $outputPath);
         if (true === $input->getOption('fill-from-string-storage')) {
             // Merge in translations from string storage.
-            $currentCatalogue = new MergeOperation(
+            $currentCatalogue = (new MergeOperation(
                 $this->loadTranslatedMessages($extractedCatalogue),
-                $currentCatalogue)->getResult();
+                $currentCatalogue))->getResult();
         }
 
         if (null !== $domain = $input->getOption('domain')) {
