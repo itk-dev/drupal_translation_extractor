@@ -6,6 +6,7 @@ use Drupal\drupal_translation_extractor\Translation\Dumper\PoItem;
 use Drupal\drupal_translation_extractor\Twig\Extension\ItkTranslationExtractorTwigExtension;
 use Symfony\Bridge\Twig\Translation\TwigExtractor as BaseTwigExtractor;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Translation\MessageCatalogue;
 use Twig\Environment;
 use Twig\Source;
@@ -44,5 +45,19 @@ class TwigExtractor extends BaseTwigExtractor
         }
 
         $visitor->disable();
+    }
+
+    /**
+     * The finder created in parent::extractFromDirectory() does not ignore VCS ignored files.
+     *
+     * @param string|iterable $directory
+     */
+    #[\Override]
+    protected function extractFromDirectory($directory): iterable
+    {
+        $finder = new Finder();
+        $finder->ignoreVCSIgnored(true);
+
+        return $finder->files()->name('*.twig')->in($directory);
     }
 }

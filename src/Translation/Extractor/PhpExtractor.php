@@ -76,6 +76,8 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
             throw new \LogicException(\sprintf('You cannot use "%s" as the "symfony/finder" package is not installed. Try running "composer require symfony/finder".', static::class));
         }
 
-        return (new Finder())->files()->name(array_map(static fn (string $ext) => '*.'.$ext, self::$supportedFileExtensions))->in($resource);
+        return (new Finder())
+            ->ignoreVCSIgnored(true)
+            ->files()->name(array_map(static fn (string $ext) => '*.'.$ext, self::$supportedFileExtensions))->in($resource);
     }
 }
