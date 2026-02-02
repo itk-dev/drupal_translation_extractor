@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-02-02
+
 * [PR-4](https://github.com/itk-dev/drupal_translation_extractor/pull/4)
   Made finders ignore VCS ignored files
 * [PR-3](https://github.com/itk-dev/drupal_translation_extractor/pull/3)
@@ -17,5 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [PR-1](https://github.com/itk-dev/drupal_translation_extractor/pull/1)
   Translation extractor
 
-[Unreleased]: https://github.com/itk-dev/drupal_translation_extractor/compare/1.0.0...HEAD
+[Unreleased]: https://github.com/itk-dev/drupal_translation_extractor/compare/1.1.0...HEAD
+[1.1.0]: https://github.com/itk-dev/drupal_translation_extractor/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/itk-dev/drupal_translation_extractor/releases/tag/1.0.0
