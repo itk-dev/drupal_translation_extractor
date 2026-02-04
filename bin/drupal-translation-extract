@@ -1,0 +1,198 @@
+#!/usr/bin/env php
+<?php
+
+// @see https://getcomposer.org/doc/articles/vendor-binaries.md#finding-the-composer-autoloader-from-a-binary
+require $_composer_autoload_path ?? __DIR__.'/../vendor/autoload.php';
+
+use Drupal\Component\Gettext\PoStreamReader;
+use Drupal\Core\Extension\ExtensionPathResolver;
+use Drupal\Core\Template\TwigTransTokenParser;
+use Drupal\drupal_translation_extractor\Command\TranslationExtractCommand;
+use Drupal\drupal_translation_extractor\Translation\Dumper\PoFileDumper;
+use Drupal\drupal_translation_extractor\Translation\Extractor\PhpExtractor;
+use Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TranslatableMarkupVisitor;
+use Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TransMethodVisitor;
+use Drupal\drupal_translation_extractor\Twig\Extension\ItkTranslationExtractorTwigExtension;
+use Drupal\drupal_translation_extractor\Twig\Translation\Extractor\TwigExtractor;
+use Drupal\locale\StringStorageInterface;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\RuntimeException;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Translation\Extractor\ChainExtractor;
+use Symfony\Component\Translation\Writer\TranslationWriter;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
+
+$application = createApplication();
+$command = createCommand();
+
+$application->addCommand($command);
+
+$application->setDefaultCommand($command->getName(), true);
+$application->run();
+
+/**
+ * Create the application with some bespoke exception handling.
+ */
+function createApplication(): Application
+{
+    return new class extends Application {
+        public function __construct()
+        {
+            parent::__construct('drupal_translation_extractor', '1.0.0');
+        }
+
+        protected function doRunCommand(
+            Command $command,
+            InputInterface $input,
+            OutputInterface $output,
+        ): int {
+            $tempInput = new ArgvInput();
+            try {
+                $tempInput->bind($command->getDefinition());
+            } catch (RuntimeException) {
+            }
+
+            if (false !== $tempInput->getOption('fill-from-string-storage')) {
+                parent::renderThrowable(
+                    new RuntimeException('Option --fill-from-string-storage cannot be used when running outside Drupal context.'),
+                    $output
+                );
+
+                return Command::FAILURE;
+            }
+
+            return parent::doRunCommand($command, $input, $output);
+        }
+
+        public function renderThrowable(Throwable $e, OutputInterface $output): void
+        {
+            if ($e instanceof ExtensionPathResolverException) {
+                parent::renderThrowable(
+                    new RuntimeException('Cannot resolve module and theme paths when running outside Drupal context.'),
+                    $output
+                );
+            } else {
+                parent::renderThrowable($e, $output);
+            }
+        }
+    };
+}
+
+/**
+ * Create the command with injected dependencies.
+ */
+function createCommand(): TranslationExtractCommand
+{
+    $twig = new Environment(new FilesystemLoader());
+    $trans = fn () => null;
+    $twig->addFilter(new Twig\TwigFilter('t', $trans));
+    $twig->addFilter(new Twig\TwigFilter('trans', $trans));
+    $twig->addExtension(new ItkTranslationExtractorTwigExtension());
+    $twig->addTokenParser(new TwigTransTokenParser());
+
+    $writer = new TranslationWriter();
+    $writer->addDumper('po', new PoFileDumper());
+
+    $reader = new PoStreamReader();
+
+    $extractor = new ChainExtractor();
+    $extractor->addExtractor('php',
+        new PhpExtractor(visitors: [
+            new TransMethodVisitor(),
+            new TranslatableMarkupVisitor(),
+        ]));
+    $extractor->addExtractor('twig', new TwigExtractor($twig));
+
+    $extensionPathResolver = new class extends ExtensionPathResolver {
+        public function __construct()
+        {
+            // No call to parent::__construct() here.
+        }
+
+        public function getPathname(string $type, string $name): ?string
+        {
+            throw new ExtensionPathResolverException(__FUNCTION__);
+        }
+    };
+
+    $stringStorage = new class implements StringStorageInterface {
+        public function getStrings(array $conditions = [], array $options = [])
+        {
+            throw new StringStorageRuntimeException(__FUNCTION__);
+        }
+
+        public function getTranslations(array $conditions = [], array $options = [])
+        {
+            throw new StringStorageRuntimeException(__FUNCTION__);
+        }
+
+        public function getLocations(array $conditions = [])
+        {
+            throw new StringStorageRuntimeException(__FUNCTION__);
+        }
+
+        public function findString(array $conditions)
+        {
+            throw new StringStorageRuntimeException(__FUNCTION__);
+        }
+
+        public function findTranslation(array $conditions)
+        {
+            throw new StringStorageRuntimeException(__FUNCTION__);
+        }
+
+        public function save($string)
+        {
+            throw new StringStorageRuntimeException(__FUNCTION__);
+        }
+
+        public function delete($string)
+        {
+            throw new StringStorageRuntimeException(__FUNCTION__);
+        }
+
+        public function deleteStrings($conditions)
+        {
+            throw new StringStorageRuntimeException(__FUNCTION__);
+        }
+
+        public function deleteTranslations($conditions)
+        {
+            throw new StringStorageRuntimeException(__FUNCTION__);
+        }
+
+        public function countStrings()
+        {
+            throw new StringStorageRuntimeException(__FUNCTION__);
+        }
+
+        public function countTranslations()
+        {
+            throw new StringStorageRuntimeException(__FUNCTION__);
+        }
+
+        public function createString($values = [])
+        {
+            throw new StringStorageRuntimeException(__FUNCTION__);
+        }
+
+        public function createTranslation($values = [])
+        {
+            throw new StringStorageRuntimeException(__FUNCTION__);
+        }
+    };
+
+    return new TranslationExtractCommand($writer, $reader, $extractor, $extensionPathResolver, $stringStorage);
+}
+
+class ExtensionPathResolverException extends \RuntimeException
+{
+}
+
+class StringStorageRuntimeException extends \RuntimeException
+{
+}

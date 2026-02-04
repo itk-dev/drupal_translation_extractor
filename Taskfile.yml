@@ -84,6 +84,7 @@ tasks:
     cmds:
       # Cf. .github/workflows/php.yaml
       - docker compose run --rm phpfpm vendor/bin/php-cs-fixer fix
+      - docker compose run --rm phpfpm vendor/bin/php-cs-fixer fix bin/drupal-translation-extract
     silent: true
 
   coding-standards:php:check:
@@ -92,6 +93,7 @@ tasks:
       - task: coding-standards:php:apply
       # Cf. .github/workflows/php.yaml
       - docker compose run --rm phpfpm vendor/bin/php-cs-fixer fix --dry-run --diff
+      - docker compose run --rm phpfpm vendor/bin/php-cs-fixer fix --dry-run --diff bin/drupal-translation-extract
     silent: true
 
   coding-standards:styles:apply:

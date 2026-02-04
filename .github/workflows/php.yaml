@@ -58,3 +58,4 @@ jobs:
           docker compose run --rm phpfpm composer install
           # https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/blob/master/doc/usage.rst#the-check-command
           docker compose run --rm phpfpm vendor/bin/php-cs-fixer fix --dry-run --diff
+          docker compose run --rm phpfpm vendor/bin/php-cs-fixer fix --dry-run --diff bin/drupal-translation-extract

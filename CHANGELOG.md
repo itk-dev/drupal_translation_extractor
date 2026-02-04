@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [PR-7](https://github.com/itk-dev/drupal_translation_extractor/pull/7)
+  Added standalone command for running outside Drupal context
+
 ## [1.1.0] - 2026-02-02
 
 * [PR-4](https://github.com/itk-dev/drupal_translation_extractor/pull/4)

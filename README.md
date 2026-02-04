@@ -11,11 +11,11 @@ This Drupal translation extractor stands on the shoulders of giants:
 ## Installation
 
 ``` shell
-composer require --dev itk-dev/drupal_translation_extractor:^1.0
+composer require --dev itk-dev/drupal_translation_extractor
 drush pm:install drupal_translation_extractor
 ```
 
-## Use
+## Usage
 
 The main entrypoint is the `drupal_translation_extractor:translation:extract` Drush command. This command is basically
 Symfony's [`translation:extract` console
@@ -38,7 +38,10 @@ A new argument has been added:
 in the value and will be expanded to the full path to the module and/or theme respectively, i.e.
 `module:my_custom_module` will be expanded to `web/modules/custom/my_custom_module`, say.
 
-A new option has been added:
+New options have been added:
+
+`--project-name` Then project name, e.g. `My Drupal module`. If not set, a project name will be computed based on any
+module or theme references in the source path.
 
 `--output` The output path. The value can use these placeholders:
 
@@ -55,17 +58,34 @@ A new option has been added:
 [^1]: Matching placeholders used the Locale module (cf.
     [locale.api.php](https://git.drupalcode.org/project/drupal/-/blob/11.x/core/modules/locale/locale.api.php)).
 
+`--fill-from-string-storage` If set, the generated translation files will be filled with translations from Drupal's
+string storage.
+
 ### Example
 
 Running
 
 ``` shell
-drush drupal_translation_extractor:translation:extract da --dump-messages --force module:my_modules --output=%source/translation/%module.%locale.po
+drush drupal_translation_extractor:translation:extract da --dump-messages --sort asc --force module:my_modules --output=%source/translation/%module.%locale.po
 ```
 
 will find translations in all PHP and Twig files in the `web/modules/custom/my_module` directory and write the result to
 `web/modules/custom/my_module/translation/my_module.da.po`.
 
-> [!NOTE]
-> Much of the code in this module is ~stolen from~based on Symfony components and therefore we do not use Drupal coding
-> standards.
+## Usage outside Drupal context
+
+It may be necessary to run the Drupal translation extractor outside Drupal context, e.g when developing a Drupal module:
+
+``` shell
+composer require --dev itk-dev/drupal_translation_extractor
+./vendor/bin/drupal-translation-extract da --dump-messages --sort asc .
+```
+
+> [!CAUTION]
+> The `--fill-from-string-storage` options cannot be used when running outside Drupal context. Nor can `module:` and
+> `theme:` placeholders be used in the `source` argument.
+
+## Development
+
+Much of the code in this module is ~stolen from~based on Symfony components and therefore we do not use Drupal coding
+standards.
