@@ -6,6 +6,7 @@
     "require": {
         "php": "^8.3",
         "drupal/core": "^10 || ^11",
+        "nikic/php-parser": "^4.0 || ^5.0",
         "symfony/translation": "^6 || ^7 || ^8",
         "symfony/twig-bridge": "^6 || ^7 || ^8"
     },
@@ -16,13 +17,20 @@
         "phpunit/phpunit": "^12.5",
         "vincentlanglet/twig-cs-fixer": "^3.11"
     },
+    "autoload": {
+        "psr-4": {
+            "Drupal\\drupal_translation_extractor\\": "src/"
+        }
+    },
     "autoload-dev": {
         "psr-4": {
-            "Drupal\\drupal_translation_extractor\\": "src/",
             "Drupal\\drupal_translation_extractor\\Test\\": "tests/",
             "Drupal\\locale\\": "vendor/drupal/core/modules/locale/src/"
         }
     },
+    "bin": [
+        "bin/drupal-translation-extract"
+    ],
     "config": {
         "allow-plugins": {
             "drupal/core-composer-scaffold": false,
