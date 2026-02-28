@@ -15,7 +15,8 @@ class PoItem extends \Drupal\Component\Gettext\PoItem
         return $this;
     }
 
-    public function __toString()
+    #[\Override]
+    public function __toString(): string
     {
         $string = parent::__toString();
 

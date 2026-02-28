@@ -12,6 +12,7 @@ use Symfony\Component\Translation\MessageCatalogue;
  */
 class PoFileDumper extends BasePoFileDumper
 {
+    #[\Override]
     public function dump(MessageCatalogue $messages, array $options = []): void
     {
         if (!\array_key_exists('path', $options)) {
@@ -26,6 +27,7 @@ class PoFileDumper extends BasePoFileDumper
         file_put_contents($outputPath, $output);
     }
 
+    #[\Override]
     public function formatCatalogue(
         MessageCatalogue $messages,
         string $domain,
@@ -53,7 +55,7 @@ class PoFileDumper extends BasePoFileDumper
                 $source = PoItem::splitStrings($source);
                 $translation = PoItem::splitStrings($translation, count($source) > 1 ? $numberOfPlurals : 1);
                 foreach ($translation as $string) {
-                    if (empty($string) || ($emptyPrefix && str_starts_with($string, $emptyPrefix))) {
+                    if (empty($string) || ($emptyPrefix && str_starts_with($string, (string) $emptyPrefix))) {
                         $item->setFuzzy();
                     }
                 }

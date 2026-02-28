@@ -12,7 +12,8 @@ class PoHeader extends \Drupal\Component\Gettext\PoHeader
         [$this->languageName, $this->pluralForms] = self::getLanguageInfo($langcode);
     }
 
-    public function __toString()
+    #[\Override]
+    public function __toString(): string
     {
         $output = trim(parent::__toString())."\n";
         $output .= '"Language: '.$this->langcode."\\n\"\n";
