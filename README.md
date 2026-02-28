@@ -1,6 +1,6 @@
 # Translation extractor
 
-Extracts translations from PHP files and Twig templates.
+Extracts translations from PHP files, Twig templates and JavaScripts files.
 
 This Drupal translation extractor stands on the shoulders of giants:
 
@@ -63,8 +63,8 @@ Running
 drush drupal_translation_extractor:translation:extract da --dump-messages --force module:my_modules --output=%source/translation/%module.%locale.po
 ```
 
-will find translations in all PHP and Twig files in the `web/modules/custom/my_module` directory and write the result to
-`web/modules/custom/my_module/translation/my_module.da.po`.
+will find translations in all PHP, Twig and JavaScript files in the `web/modules/custom/my_module` directory and write
+the result to `web/modules/custom/my_module/translation/my_module.da.po`.
 
 > [!NOTE]
 > Much of the code in this module is ~stolen from~based on Symfony components and therefore we do not use Drupal coding
