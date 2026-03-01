@@ -262,7 +262,7 @@ final class TranslationNodeVisitor implements NodeVisitorInterface
         }
 
         return [
-            new Nodes([new ConstantExpression(trim($text), $body->getTemplateLine())]),
+            new Nodes([new ConstantExpression(trim((string) $text), $body->getTemplateLine())]),
             $tokens,
         ];
     }

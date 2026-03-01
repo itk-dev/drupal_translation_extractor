@@ -17,6 +17,7 @@ final class ItkTranslationExtractorTwigExtension extends AbstractExtension
     ) {
     }
 
+    #[\Override]
     public function getNodeVisitors(): array
     {
         return [

@@ -34,14 +34,14 @@ use Symfony\Component\Translation\Writer\TranslationWriterInterface;
 )]
 final class TranslationExtractCommand extends Command
 {
-    private const ASC = 'asc';
-    private const DESC = 'desc';
-    private const SORT_ORDERS = [self::ASC, self::DESC];
-    private const FORMATS = [
+    private const string ASC = 'asc';
+    private const string DESC = 'desc';
+    private const array SORT_ORDERS = [self::ASC, self::DESC];
+    private const array FORMATS = [
         'xlf12' => ['xlf', '1.2'],
         'xlf20' => ['xlf', '2.0'],
     ];
-    private const NO_FILL_PREFIX = "\0NoFill\0";
+    private const string NO_FILL_PREFIX = "\0NoFill\0";
 
     public function __construct(
         private readonly TranslationWriterInterface $writer,
@@ -188,7 +188,7 @@ EOF
         $resultMessage = 'Translation files were successfully updated';
 
         if ($sort = $input->getOption('sort')) {
-            $sort = strtolower($sort);
+            $sort = strtolower((string) $sort);
             if (!\in_array($sort, self::SORT_ORDERS, true)) {
                 $errorIo->error(['Wrong sort order', 'Supported formats are: '.implode(', ', self::SORT_ORDERS).'.']);
 
@@ -383,7 +383,7 @@ EOF
 
     private function filterDuplicateTransPaths(array $transPaths): array
     {
-        $transPaths = array_filter(array_map('realpath', $transPaths));
+        $transPaths = array_filter(array_map(realpath(...), $transPaths));
 
         sort($transPaths);
 
@@ -456,7 +456,7 @@ EOF
     {
         foreach ($operation->getDomains() as $domain) {
             foreach ($operation->all($domain) as $key => $message) {
-                if (str_starts_with($message, self::NO_FILL_PREFIX)) {
+                if (str_starts_with((string) $message, self::NO_FILL_PREFIX)) {
                     $operation->set($key, '', $domain);
                 }
             }
@@ -492,7 +492,7 @@ EOF
 
                 return $path;
             },
-            $source,
+            (string) $source,
         );
 
         if (!file_exists($source)) {
@@ -509,7 +509,7 @@ EOF
         $output = $input->getOption('output');
 
         if ($source = ($sourceInfo['source'] ?? null)) {
-            $sourceInfo['source_dir'] = is_dir($source) ? $source : dirname($source);
+            $sourceInfo['source_dir'] = is_dir($source) ? $source : dirname((string) $source);
         }
         $sourceInfo['project'] = $sourceInfo['module'] ?? $sourceInfo['theme'] ?? null;
         $sourceInfo['language'] = $sourceInfo['locale'] ?? null;

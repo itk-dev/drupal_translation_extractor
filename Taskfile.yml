@@ -136,6 +136,19 @@ tasks:
   code-analysis:
     desc: "Run static code analysis"
     cmds:
+      - task: code-analysis:rector
+      - task: code-analysis:phpstan
+
+  code-analysis:rector:
+    desc: "Run Rector"
+    cmds:
+      - task: compose
+        vars:
+          TASK_ARGS: run --rm phpfpm vendor/bin/rector
+
+  code-analysis:phpstan:
+    desc: "Run PHPStan"
+    cmds:
       - task: compose
         vars:
           TASK_ARGS: run --rm phpfpm vendor/bin/phpstan

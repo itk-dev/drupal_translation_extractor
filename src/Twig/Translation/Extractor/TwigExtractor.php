@@ -20,16 +20,18 @@ class TwigExtractor extends BaseTwigExtractor
 
     public function __construct(
         #[Autowire(service: 'twig')]
-        private Environment $twig,
+        private readonly Environment $twig,
     ) {
         parent::__construct($this->twig);
     }
 
+    #[\Override]
     public function setPrefix(string $prefix): void
     {
         $this->prefix = $prefix;
     }
 
+    #[\Override]
     protected function extractTemplate(string $template, MessageCatalogue $catalogue): void
     {
         $visitor = $this->twig->getExtension(ItkTranslationExtractorTwigExtension::class)->getTranslationNodeVisitor();
@@ -37,7 +39,7 @@ class TwigExtractor extends BaseTwigExtractor
         $visitor->enable();
         $this->twig->parse($this->twig->tokenize(new Source($template, '')));
         foreach ($visitor->getMessages() as $message) {
-            $id = trim($message[0]);
+            $id = trim((string) $message[0]);
             // $translation = Helper::joinStrings(...array_map(static fn (string $string) => '', [...Helper::splitStrings($id)]));
             $translation = PoItem::joinStrings(PoItem::splitStrings($id), $this->prefix);
             $domain = $message[1] ?: PoItem::NO_CONTEXT;

@@ -19,7 +19,7 @@ use Symfony\Component\Translation\MessageCatalogue;
  */
 class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
 {
-    private Parser $parser;
+    private readonly Parser $parser;
 
     public function __construct(
         /**
