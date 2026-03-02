@@ -6,6 +6,8 @@ services:
 
   Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TranslatableMarkupVisitor:
 
+  Drupal\drupal_translation_extractor\Translation\Extractor\JsExtractor:
+
   Drupal\drupal_translation_extractor\Translation\Extractor\PhpExtractor:
     arguments:
       $visitors:
@@ -21,6 +23,13 @@ services:
   drupal_translation_extractor.extractor:
     class: Symfony\Component\Translation\Extractor\ChainExtractor
     calls:
+      - [
+          "addExtractor",
+          [
+            "js",
+            '@Drupal\drupal_translation_extractor\Translation\Extractor\JsExtractor',
+          ],
+        ]
       - [
           "addExtractor",
           [

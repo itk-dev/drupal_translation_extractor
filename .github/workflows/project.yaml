@@ -21,8 +21,13 @@ jobs:
       - run: |
           task composer -- install
 
-      - run: |
-          task code-analysis
+      - name: Rector
+        run: |
+          task code-analysis:rector -- --dry-run --no-progress-bar
+
+      - name: PHPStan
+        run: |
+          task code-analysis:phpstan -- --no-progress
 
   test:
     name: Run tests
