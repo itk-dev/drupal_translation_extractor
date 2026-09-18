@@ -60,7 +60,7 @@ A new option has been added:
 Running
 
 ``` shell
-drush drupal_translation_extractor:translation:extract da --dump-messages --force module:my_modules --output=%source/translation/%module.%locale.po
+drush drupal_translation_extractor:translation:extract da --dump-messages --force module:my_module --output=%source/translation/%module.%locale.po
 ```
 
 will find translations in all PHP, Twig and JavaScript files in the `web/modules/custom/my_module` directory and write
