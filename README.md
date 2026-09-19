@@ -52,7 +52,7 @@ A new option has been added:
 | `%language`[^1] | Alias for `%locale`                                       |
 | `%project` [^1] | Alias for either `%module` or `%theme` (whichever is set) |
 
-[^1]: Matching placeholders used the Locale module (cf.
+[^1]: Matching placeholders used by the Locale module (cf.
     [locale.api.php](https://git.drupalcode.org/project/drupal/-/blob/11.x/core/modules/locale/locale.api.php)).
 
 ### Example
@@ -65,6 +65,14 @@ drush drupal_translation_extractor:translation:extract da --dump-messages --forc
 
 will find translations in all PHP, Twig and JavaScript files in the `web/modules/custom/my_module` directory and write
 the result to `web/modules/custom/my_module/translation/my_module.da.po`.
+
+Run
+
+``` shell
+drush drupal_translation_extractor:translation:extract --help
+```
+
+to see all options and arguments.
 
 > [!NOTE]
 > Much of the code in this module is ~stolen from~based on Symfony components and therefore we do not use Drupal coding
