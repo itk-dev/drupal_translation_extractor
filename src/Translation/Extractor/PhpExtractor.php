@@ -78,6 +78,7 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
 
         return (new Finder())
             ->ignoreVCSIgnored(true)
+            ->followLinks()
             ->files()->name(array_map(static fn (string $ext) => '*.'.$ext, self::$supportedFileExtensions))->in($resource);
     }
 }

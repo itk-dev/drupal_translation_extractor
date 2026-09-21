@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [PR-10](https://github.com/itk-dev/drupal_translation_extractor/pull/10)
+  Added missing module dependency. Cleaned up documentation. Let finder find linked files.
+
 * [PR-8](https://github.com/itk-dev/drupal_translation_extractor/pull/8)
   Added support for js files
 * [PR-9](https://github.com/itk-dev/drupal_translation_extractor/pull/9)

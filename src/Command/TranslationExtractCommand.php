@@ -78,25 +78,28 @@ final class TranslationExtractCommand extends Command
               new InputOption('project-name', null, InputOption::VALUE_REQUIRED, 'Project name. If not set, a project name will be computed based on the source.'),
           ])
           ->setHelp(<<<'EOF'
-The <info>%command.name%</info> command extracts translation strings from templates
-of a given module or theme or another path. It can display them or merge
-the new ones into the translation files.
 
-When new translation strings are found it can automatically add a prefix to the translation
-message. However, if the <comment>--no-fill</comment> option is used, the <comment>--prefix</comment>
-option has no effect, since the translation values are left empty.
+The <info>%command.name%</info> command extracts translation strings from
+templates of a given module or theme or a path. It can display the extracted
+translations or merge the new ones into existing translation files.
 
-Example running against a module (my_module)
+When a new translation string is found, a prefix (set with
+<comment>--prefix</comment>) can automatically be added to the translation
+message to mark it a new. However, if the <comment>--no-fill</comment> option is
+used, the <comment>--prefix</comment> option has no effect, since the
+translation values are left empty.
+
+Example: Extracting translations from a module (my_module)
 
   <info>php %command.full_name% --dump-messages en module:my_module</info>
   <info>php %command.full_name% --force --prefix="new_" fr module:my_module</info>
 
-Example running against a theme (my_theme)
+Example: Extracting translations from a theme (my_theme)
 
   <info>php %command.full_name% --dump-messages en theme:my_theme</info>
   <info>php %command.full_name% --force --prefix="new_" fr theme:my_theme</info>
 
-You can sort the output with the <comment>--sort</> flag:
+Example: Sorting messages with the <comment>--sort</> flag:
 
     <info>php %command.full_name% --dump-messages --sort=asc en …</info>
     <info>php %command.full_name% --force --sort=desc fr …</info>
