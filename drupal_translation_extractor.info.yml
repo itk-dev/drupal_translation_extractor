@@ -6,3 +6,8 @@ core_version_requirement: ^10 || ^11
 
 dependencies:
   - drupal:locale
+
+# The following metadata is automatically updated. Do not edit below this line.
+project: drupal_translation_extractor
+version: ""
+datestamp: 0
