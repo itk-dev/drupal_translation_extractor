@@ -85,7 +85,7 @@ translations or merge the new ones into existing translation files.
 
 When a new translation string is found, a prefix (set with
 <comment>--prefix</comment>) can automatically be added to the translation
-message to mark it a new. However, if the <comment>--no-fill</comment> option is
+message to mark it as new. However, if the <comment>--no-fill</comment> option is
 used, the <comment>--prefix</comment> option has no effect, since the
 translation values are left empty.
 
