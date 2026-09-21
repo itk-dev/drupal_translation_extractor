@@ -1,0 +1,28 @@
+name: Add module metadata
+
+on:
+  push:
+    tags:
+      - "*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  add-metadata:
+    runs-on: ubuntu-latest
+    steps:
+      # https://github.com/stefanzweifel/git-auto-commit-action#usage
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.head_ref }}
+          # Value already defaults to true, but `persist-credentials` is required to push new commits to the repository.
+          persist-credentials: true
+
+      - name: Add module metadata
+        run: |
+          # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/contexts#github-context
+          tag_name="${{ github.ref_name }}"
+          docker compose run --rm phpfpm sed --expression "s/^version:.*/version: '$tag_name'/" --expression "s/^datestamp: .*/datestamp: $(date +%s)/" --in-place drupal_translation_extractor.info.yml
+
+      - uses: stefanzweifel/git-auto-commit-action@v7
