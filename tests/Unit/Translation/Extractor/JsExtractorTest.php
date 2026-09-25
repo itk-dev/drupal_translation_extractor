@@ -31,6 +31,24 @@ final class JsExtractorTest extends AbstractTestCase
         $this->assertContains('the context', $domains);
     }
 
+    public function testDrupalTLinked(): void
+    {
+        $resource = $this->getResourcePath('linked');
+        $locale = 'da';
+        $messages = new MessageCatalogue($locale);
+
+        $extractor = $this->createExtractor();
+        $extractor->extract($resource, $messages);
+
+        $domains = $messages->getDomains();
+
+        $this->assertCount(2, $domains);
+        $this->assertContains(PoItem::NO_CONTEXT, $domains);
+        $this->assertCount(2, $messages->all(PoItem::NO_CONTEXT));
+        $this->assertCount(2, $messages->all('the context'));
+        $this->assertContains('the context', $domains);
+    }
+
     private function createExtractor(): JsExtractor
     {
         return new JsExtractor();
