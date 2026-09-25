@@ -76,6 +76,7 @@ final class TranslationExtractCommand extends Command
               new InputOption('output', null, InputOption::VALUE_REQUIRED, 'Output path. Required if --force is specified.'),
               new InputOption('fill-from-string-storage', null, InputOption::VALUE_NONE, 'Fill translations with values from string storage.'),
               new InputOption('project-name', null, InputOption::VALUE_REQUIRED, 'Project name. If not set, a project name will be computed based on the source.'),
+              new InputOption('require-context', null, InputOption::VALUE_OPTIONAL, 'If set, all translations must use a context. If a value is provided, all translation must use that exact context. Use `--debug` to list translations not using a valid context.', default: false),
           ])
           ->setHelp(<<<'EOF'
 
@@ -153,6 +154,49 @@ EOF
         $io->comment('Parsing templates...');
         $prefix = $input->getOption('no-fill') ? self::NO_FILL_PREFIX : $input->getOption('prefix');
         $extractedCatalogue = $this->extractMessages($input->getArgument('locale'), $codePaths, $prefix);
+
+        $requireContext = $input->getOption('require-context');
+        if (null === $requireContext) {
+            // All translations must use a context
+            $domains = $extractedCatalogue->getDomains();
+            if (in_array(PoItem::NO_CONTEXT, $domains)) {
+                $errorIo->error('All translations must use a context.');
+
+                if ($output->isDebug()) {
+                    $io->section('Translations not using a context');
+
+                    $messages = array_keys($extractedCatalogue->all(PoItem::NO_CONTEXT));
+                    $io->listing($messages);
+                }
+
+                return self::FAILURE;
+            }
+        } elseif (false !== $requireContext) {
+            $context = $requireContext;
+            // All translations must use the specified context
+            $domains = $extractedCatalogue->getDomains();
+            if (1 !== count($domains) || reset($domains) !== $context) {
+                $errorIo->error(sprintf('All translations must use the "%s" context.', $context));
+
+                if ($output->isDebug()) {
+                    $io->section(sprintf('Translations not using the "%s" context', $context));
+
+                    foreach ($extractedCatalogue->getDomains() as $domain) {
+                        if ($domain === $context) {
+                            continue;
+                        }
+
+                        $io->text(sprintf('Context "%s"', $domain));
+                        $io->newLine();
+
+                        $messages = array_keys($extractedCatalogue->all($domain));
+                        $io->listing($messages);
+                    }
+                }
+
+                return self::FAILURE;
+            }
+        }
 
         $io->comment('Loading translated messages...');
         $outputPath = $this->getOutputPath($input, $sourceInfo + [
