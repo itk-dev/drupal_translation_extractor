@@ -67,7 +67,7 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
     {
         return in_array(pathinfo($file, \PATHINFO_EXTENSION), self::$supportedFileExtensions, true)
             && $this->isFile($file)
-            && preg_match('/\bt\(|->t(?:rans)?\(|TranslatableMarkup/i', file_get_contents($file));
+            && preg_match('/\bt\(|->t(?:rans)?\(|TranslatableMarkup|@Translation\(/i', file_get_contents($file));
     }
 
     protected function extractFromDirectory(array|string $resource): iterable|Finder
