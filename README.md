@@ -55,7 +55,7 @@ A couple of new option have been added:
 [^1]: Matching placeholders used by the Locale module (cf.
     [locale.api.php](https://git.drupalcode.org/project/drupal/-/blob/11.x/core/modules/locale/locale.api.php)).
 
-`--require-context[=context]` If set, all translations must define a context. If a value is provides, e.g.
+`--require-context[=context]` If set, all translations must define a context. If a value is provided, e.g.
 `--require-context=my_module`, then all translation must use `my_module` as context.
 
 > [!TIP]
