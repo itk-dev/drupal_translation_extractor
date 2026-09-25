@@ -8,6 +8,7 @@ use Drupal\drupal_translation_extractor\Test\Unit\AbstractTestCase;
 use Drupal\drupal_translation_extractor\Translation\Dumper\PoItem;
 use Drupal\drupal_translation_extractor\Translation\Extractor\PhpExtractor;
 use Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TranslatableMarkupVisitor;
+use Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TranslationAnnotationVisitor;
 use Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TransMethodVisitor;
 use Symfony\Component\Translation\MessageCatalogue;
 
@@ -34,6 +35,28 @@ final class PhpExtractorTest extends AbstractTestCase
         $this->assertCount(3, $messages->all('the context'));
         $this->assertContains('the context', $domains);
         $this->assertCount(3, $messages->all('another context'));
+        $this->assertContains('another context', $domains);
+    }
+
+    public function testTransMethodLinked(): void
+    {
+        $resource = $this->getResourcePath('linked/');
+        $locale = 'da';
+        $messages = new MessageCatalogue($locale);
+
+        $extractor = $this->createExtractor(visitors: [
+            new TransMethodVisitor(),
+        ]);
+        $extractor->extract($resource, $messages);
+
+        $domains = $messages->getDomains();
+
+        $this->assertCount(3, $domains);
+        $this->assertContains(PoItem::NO_CONTEXT, $domains);
+        $this->assertCount(4, $messages->all(PoItem::NO_CONTEXT));
+        $this->assertCount(4, $messages->all('the context'));
+        $this->assertContains('the context', $domains);
+        $this->assertCount(4, $messages->all('another context'));
         $this->assertContains('another context', $domains);
     }
 
@@ -125,6 +148,32 @@ final class PhpExtractorTest extends AbstractTestCase
         $this->assertCount(1, $messages->all('the context'));
         $this->assertContains('another context', $domains);
         $this->assertCount(1, $messages->all('another context'));
+    }
+
+    public function testAnnotationPropertyTranslation(): void
+    {
+        $resource = [
+            $this->getResourcePath('src/MyPlugin.php'),
+        ];
+        $locale = 'da';
+        $messages = new MessageCatalogue($locale);
+
+        $extractor = $this->createExtractor(
+            visitors: [
+                new TranslationAnnotationVisitor(),
+            ]
+        );
+        $extractor->extract($resource, $messages);
+
+        $domains = $messages->getDomains();
+
+        $this->assertCount(3, $domains);
+        $this->assertContains(PoItem::NO_CONTEXT, $domains);
+        $this->assertCount(1, $messages->all(PoItem::NO_CONTEXT));
+        $this->assertContains('my_plugin', $domains);
+        $this->assertCount(3, $messages->all('my_plugin'));
+        $this->assertContains('my_plugin_text', $domains);
+        $this->assertCount(1, $messages->all('my_plugin_text'));
     }
 
     private function createExtractor(array $visitors): PhpExtractor

@@ -6,6 +6,8 @@ services:
 
   Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TranslatableMarkupVisitor:
 
+  Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TranslationAnnotationVisitor:
+
   Drupal\drupal_translation_extractor\Translation\Extractor\JsExtractor:
 
   Drupal\drupal_translation_extractor\Translation\Extractor\PhpExtractor:
@@ -13,6 +15,7 @@ services:
       $visitors:
         - '@Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TransMethodVisitor'
         - '@Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TranslatableMarkupVisitor'
+        - '@Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TranslationAnnotationVisitor'
 
   Drupal\drupal_translation_extractor\Twig\Translation\Extractor\TwigExtractor:
 

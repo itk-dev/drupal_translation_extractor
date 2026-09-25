@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [PR-15](https://github.com/itk-dev/drupal_translation_extractor/pull/15)
+  Added support for extracting @Translation annotations
 * [PR-14](https://github.com/itk-dev/drupal_translation_extractor/pull/14)
   Aligned configuration and use of finders
 
