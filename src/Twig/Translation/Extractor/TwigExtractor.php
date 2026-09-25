@@ -57,9 +57,13 @@ class TwigExtractor extends BaseTwigExtractor
     #[\Override]
     protected function extractFromDirectory($directory): iterable
     {
-        $finder = new Finder();
-        $finder->ignoreVCSIgnored(true);
+        $finder = (new Finder())
+            ->ignoreVCSIgnored(true)
+            ->followLinks();
 
-        return $finder->files()->name('*.twig')->in($directory);
+        return $finder
+            ->files()
+            ->name('*.twig')
+            ->in($directory);
     }
 }

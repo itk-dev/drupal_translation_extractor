@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [PR-14](https://github.com/itk-dev/drupal_translation_extractor/pull/14)
+  Aligned configuration and use of finders
+
 ## [1.3.0] - 2026-09-25
 
 * [PR-13](https://github.com/itk-dev/drupal_translation_extractor/pull/13)
