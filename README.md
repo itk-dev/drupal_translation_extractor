@@ -38,7 +38,7 @@ A new argument has been added:
 in the value and will be expanded to the full path to the module and/or theme respectively, i.e.
 `module:my_custom_module` will be expanded to `web/modules/custom/my_custom_module`, say.
 
-A new option has been added:
+A couple of new option have been added:
 
 `--output` The output path. The value can use these placeholders:
 
@@ -55,12 +55,18 @@ A new option has been added:
 [^1]: Matching placeholders used by the Locale module (cf.
     [locale.api.php](https://git.drupalcode.org/project/drupal/-/blob/11.x/core/modules/locale/locale.api.php)).
 
+`--require-context[=context]` If set, all translations must define a context. If a value is provides, e.g.
+`--require-context=my_module`, then all translation must use `my_module` as context.
+
+> [!TIP]
+> Use `--debug` along with `--require-context` to list any messages not using a valid context.
+
 ### Example
 
 Running
 
 ``` shell
-drush drupal_translation_extractor:translation:extract da --dump-messages --force module:my_module --output=%source/translation/%module.%locale.po
+drush drupal_translation_extractor:translation:extract da --dump-messages --force --output=%source/translation/%module.%locale.po module:my_module
 ```
 
 will find translations in all PHP, Twig and JavaScript files in the `web/modules/custom/my_module` directory and write

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [PR-13](https://github.com/itk-dev/drupal_translation_extractor/pull/13)
+  Added `--equire-context` option
 * [PR-10](https://github.com/itk-dev/drupal_translation_extractor/pull/10)
   Added missing module dependency. Cleaned up documentation. Let finder find linked files.
 
