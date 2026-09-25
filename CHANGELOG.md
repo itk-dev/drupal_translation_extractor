@@ -7,10 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-09-25
+
 * [PR-13](https://github.com/itk-dev/drupal_translation_extractor/pull/13)
   Added `--require-context` option
 * [PR-10](https://github.com/itk-dev/drupal_translation_extractor/pull/10)
   Added missing module dependency. Cleaned up documentation. Let finder find linked files.
+
+## [1.2.0] - 2026-03-02
 
 * [PR-8](https://github.com/itk-dev/drupal_translation_extractor/pull/8)
   Added support for js files
@@ -29,6 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [PR-1](https://github.com/itk-dev/drupal_translation_extractor/pull/1)
   Translation extractor
 
-[Unreleased]: https://github.com/itk-dev/drupal_translation_extractor/compare/1.1.0...HEAD
+[Unreleased]: https://github.com/itk-dev/drupal_translation_extractor/compare/1.3.0...HEAD
+[1.3.0]: https://github.com/itk-dev/drupal_translation_extractor/compare/1.2.0...1.3.0
+[1.2.0]: https://github.com/itk-dev/drupal_translation_extractor/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/itk-dev/drupal_translation_extractor/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/itk-dev/drupal_translation_extractor/releases/tag/1.0.0
