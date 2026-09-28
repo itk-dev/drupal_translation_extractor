@@ -33,6 +33,26 @@ final class TwigExtractorTest extends AbstractTestCase
         $this->assertContains('another context', $domains);
     }
 
+    public function testTransMethodLinked(): void
+    {
+        $resource = $this->getResourcePath('linked');
+        $locale = 'da';
+        $messages = new MessageCatalogue($locale);
+
+        $extractor = $this->createExtractor();
+        $extractor->extract($resource, $messages);
+
+        $domains = $messages->getDomains();
+
+        $this->assertCount(3, $domains);
+        $this->assertContains(PoItem::NO_CONTEXT, $domains);
+        $this->assertCount(4, $messages->all(PoItem::NO_CONTEXT));
+        $this->assertCount(3, $messages->all('the context'));
+        $this->assertContains('the context', $domains);
+        $this->assertCount(2, $messages->all('another context'));
+        $this->assertContains('another context', $domains);
+    }
+
     public function testDrupalTransMethod(): void
     {
         $resource = [
