@@ -186,7 +186,7 @@ EOF
                             continue;
                         }
 
-                        $io->text(sprintf('Context "%s"', $domain));
+                        $io->text(sprintf('Context "%s"', PoItem::formatContext($domain)));
                         $io->newLine();
 
                         $messages = array_keys($extractedCatalogue->all($domain));
