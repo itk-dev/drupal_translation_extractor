@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-28
+
 * [PR-15](https://github.com/itk-dev/drupal_translation_extractor/pull/15)
   Added support for extracting @Translation annotations
 * [PR-14](https://github.com/itk-dev/drupal_translation_extractor/pull/14)
@@ -38,7 +40,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [PR-1](https://github.com/itk-dev/drupal_translation_extractor/pull/1)
   Translation extractor
 
-[Unreleased]: https://github.com/itk-dev/drupal_translation_extractor/compare/1.3.0...HEAD
+[Unreleased]: https://github.com/itk-dev/drupal_translation_extractor/compare/1.4.0...HEAD
+[1.4.0]: https://github.com/itk-dev/drupal_translation_extractor/compare/1.3.0...1.4.0
 [1.3.0]: https://github.com/itk-dev/drupal_translation_extractor/compare/1.2.0...1.3.0
 [1.2.0]: https://github.com/itk-dev/drupal_translation_extractor/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/itk-dev/drupal_translation_extractor/compare/1.0.0...1.1.0
