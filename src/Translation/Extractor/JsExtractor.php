@@ -61,7 +61,7 @@ class JsExtractor extends AbstractFileExtractor implements ExtractorInterface
             throw new \LogicException(\sprintf('You cannot use "%s" as the "symfony/finder" package is not installed. Try running "composer require symfony/finder".', static::class));
         }
 
-        $finder = (new Finder())
+        $finder = new Finder()
             ->ignoreVCSIgnored(true)
             ->followLinks();
 

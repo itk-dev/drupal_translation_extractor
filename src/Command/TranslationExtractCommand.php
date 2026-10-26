@@ -16,6 +16,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Translation\Catalogue\MergeOperation;
 use Symfony\Component\Translation\Catalogue\TargetOperation;
 use Symfony\Component\Translation\Extractor\ExtractorInterface;
@@ -44,8 +45,11 @@ final class TranslationExtractCommand extends Command
     private const string NO_FILL_PREFIX = "\0NoFill\0";
 
     public function __construct(
+        #[Autowire(service: 'drupal_translation_extractor.translation_writer')]
         private readonly TranslationWriterInterface $writer,
+        #[Autowire(service: 'drupal_translation_extractor.translation_reader')]
         private readonly PoStreamReader $reader,
+        #[Autowire(service: 'drupal_translation_extractor.extractor')]
         private readonly ExtractorInterface $extractor,
         private readonly ExtensionPathResolver $extensionPathResolver,
         private readonly StringStorageInterface $stringStorage,
@@ -206,9 +210,9 @@ EOF
         $currentCatalogue = $this->loadCurrentMessages($input->getArgument('locale'), $outputPath);
         if (true === $input->getOption('fill-from-string-storage')) {
             // Merge in translations from string storage.
-            $currentCatalogue = (new MergeOperation(
+            $currentCatalogue = new MergeOperation(
                 $this->loadTranslatedMessages($extractedCatalogue),
-                $currentCatalogue))->getResult();
+                $currentCatalogue)->getResult();
         }
 
         if (null !== $domain = $input->getOption('domain')) {

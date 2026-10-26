@@ -2,7 +2,7 @@
 
 namespace Drupal\drupal_translation_extractor\Translation\Dumper;
 
-class PoItem extends \Drupal\Component\Gettext\PoItem
+class PoItem extends \Drupal\Component\Gettext\PoItem implements \Stringable
 {
     public const string NO_CONTEXT = '__no_context__';
 
@@ -29,7 +29,7 @@ class PoItem extends \Drupal\Component\Gettext\PoItem
             $string = '#, '.implode(',', $flags)."\n".$string;
         }
 
-        return $string;
+        return (string) $string;
     }
 
     public static function joinStrings(array $strings, string $prefix = ''): string
