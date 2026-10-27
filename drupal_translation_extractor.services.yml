@@ -17,6 +17,8 @@ services:
         - '@Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TranslatableMarkupVisitor'
         - '@Drupal\drupal_translation_extractor\Translation\Extractor\Visitor\TranslationAnnotationVisitor'
 
+  Drupal\drupal_translation_extractor\Translation\Extractor\YamlExtractor:
+
   Drupal\drupal_translation_extractor\Twig\Translation\Extractor\TwigExtractor:
 
   Drupal\drupal_translation_extractor\Twig\Extension\ItkTranslationExtractorTwigExtension:
@@ -38,6 +40,13 @@ services:
           [
             "php",
             '@Drupal\drupal_translation_extractor\Translation\Extractor\PhpExtractor',
+          ],
+        ]
+      - [
+          "addExtractor",
+          [
+            "yaml",
+            '@Drupal\drupal_translation_extractor\Translation\Extractor\YamlExtractor',
           ],
         ]
       - [
