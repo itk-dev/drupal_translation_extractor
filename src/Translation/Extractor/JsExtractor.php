@@ -28,7 +28,6 @@ class JsExtractor extends AbstractFileExtractor implements ExtractorInterface
         foreach ($this->extractFiles($resource) as $file) {
             $filename = $file->getPathname();
             $messages = $this->extractMessages($filename);
-            $this->canBeExtracted($filename);
 
             foreach ($messages as $message) {
                 $id = $message['source'];

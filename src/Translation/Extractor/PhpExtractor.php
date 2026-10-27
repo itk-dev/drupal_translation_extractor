@@ -37,6 +37,7 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
 
     public function extract(iterable|string $resource, MessageCatalogue $catalogue): void
     {
+        /** @var \SplFileInfo $file */
         foreach ($this->extractFiles($resource) as $file) {
             $traverser = new NodeTraverser();
 
