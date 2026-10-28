@@ -1,10 +1,10 @@
 <?php
 
-namespace Drupal\drupal_translation_extractor\Test\Unit\Command;
+namespace Drupal\drupal_translation_extractor\Test\Unit\Drush\Commands;
 
 use Drupal\Component\Gettext\PoStreamReader;
 use Drupal\Core\Extension\ExtensionPathResolver;
-use Drupal\drupal_translation_extractor\Command\TranslationExtractCommand;
+use Drupal\drupal_translation_extractor\Drush\Commands\TranslationExtractCommand;
 use Drupal\drupal_translation_extractor\Test\Unit\AbstractTestCase;
 use Drupal\drupal_translation_extractor\Translation\Dumper\PoFileDumper;
 use Drupal\drupal_translation_extractor\Translation\Extractor\PhpExtractor;

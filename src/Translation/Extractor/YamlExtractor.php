@@ -114,8 +114,8 @@ class YamlExtractor extends AbstractFileExtractor implements ExtractorInterface
             foreach ($keys as $key) {
                 if (isset($spec[$key])) {
                     $id = $spec[$key];
-                    $translation = $this->prefix . $id;
-                    $domain = $spec[$key . '_context'] ?? PoItem::NO_CONTEXT;
+                    $translation = $this->prefix.$id;
+                    $domain = $spec[$key.'_context'] ?? PoItem::NO_CONTEXT;
                     $catalogue->set($id, $translation, $domain);
                 }
             }
@@ -129,8 +129,8 @@ class YamlExtractor extends AbstractFileExtractor implements ExtractorInterface
             foreach ($keys as $key) {
                 if (isset($spec['defaults'][$key])) {
                     $id = $spec['defaults'][$key];
-                    $translation = $this->prefix . $id;
-                    $domain = $spec['defaults'][$key . '_context'] ?? PoItem::NO_CONTEXT;
+                    $translation = $this->prefix.$id;
+                    $domain = $spec['defaults'][$key.'_context'] ?? PoItem::NO_CONTEXT;
                     $catalogue->set($id, $translation, $domain);
                 }
             }

@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Drupal\drupal_translation_extractor\Command;
+namespace Drupal\drupal_translation_extractor\Drush\Commands;
 
 use Drupal\Component\Gettext\PoStreamReader;
 use Drupal\Core\Extension\ExtensionPathResolver;
 use Drupal\drupal_translation_extractor\Exception\InvalidArgumentException;
 use Drupal\drupal_translation_extractor\Translation\Dumper\PoItem;
 use Drupal\locale\StringStorageInterface;
+use Drush\Commands\AutowireTrait;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -35,6 +36,8 @@ use Symfony\Component\Translation\Writer\TranslationWriterInterface;
 )]
 final class TranslationExtractCommand extends Command
 {
+    use AutowireTrait;
+
     private const string ASC = 'asc';
     private const string DESC = 'desc';
     private const array SORT_ORDERS = [self::ASC, self::DESC];
