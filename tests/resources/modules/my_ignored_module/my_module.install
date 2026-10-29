@@ -1,0 +1,7 @@
+<?php
+
+function my_module_install() {
+  t('ignored My module install');
+  t('ignored My module install', [], ['context' => 'the module install context']);
+  t('ignored My module install', options: ['context' => 'another module install context']);
+}

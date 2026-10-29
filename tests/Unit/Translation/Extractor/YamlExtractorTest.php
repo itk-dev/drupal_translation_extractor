@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\drupal_translation_extractor\Test\Unit\Translation\Extractor;
 
+use Drupal\drupal_translation_extractor\Options\FinderOptions;
 use Drupal\drupal_translation_extractor\Test\Unit\AbstractTestCase;
 use Drupal\drupal_translation_extractor\Translation\Dumper\PoItem;
 use Drupal\drupal_translation_extractor\Translation\Extractor\YamlExtractor;
@@ -139,6 +140,27 @@ final class YamlExtractorTest extends AbstractTestCase
         $this->assertCount(5, $messages->all('admin'));
         $this->assertContains('editor', $domains);
         $this->assertCount(5, $messages->all('editor'));
+    }
+
+    public function testAllFinderDoNotIgnoreVCSIgnored(): void
+    {
+        FinderOptions::setIgnoreVCSIgnored(false);
+        $resource = $this->getResourcePath('.');
+        $locale = 'da';
+        $messages = new MessageCatalogue($locale);
+
+        $extractor = $this->createExtractor();
+        $extractor->extract($resource, $messages);
+
+        $domains = $messages->getDomains();
+
+        $this->assertCount(3, $domains);
+        $this->assertContains(PoItem::NO_CONTEXT, $domains);
+        $this->assertCount(2 * 5, $messages->all(PoItem::NO_CONTEXT));
+        $this->assertContains('admin', $domains);
+        $this->assertCount(2 * 5, $messages->all('admin'));
+        $this->assertContains('editor', $domains);
+        $this->assertCount(2 * 5, $messages->all('editor'));
     }
 
     private function createExtractor(): YamlExtractor

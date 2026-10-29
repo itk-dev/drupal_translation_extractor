@@ -43,14 +43,11 @@ jobs:
       - name: Twig coding standards
         run: ddev php vendor/bin/twig-cs-fixer
 
-      - name: Code analysis
+      - name: PHPStan
         run: ddev phpstan
 
       - name: Rector
         run: ddev php vendor/bin/rector --dry-run
-
-      - name: PHPStan
-        run: ddev phpstan
 
       - name: Tests
         run: ddev phpunit

@@ -1,0 +1,11 @@
+{# https://www.drupal.org/docs/8/api/translation-api/overview#s-translation-in-twig-templates #}
+{{ 'ignored t filter'|t }}
+{{ 'ignored t filter with options context'|t(options: {context: 'the context'}) }}
+{{ 'ignored t filter with context'|t({}, {context: 'another context'}) }}
+
+{{ 'ignored trans filter'|trans }}
+{{ 'ignored trans filter with options context'|trans(options: {context: 'the context'}) }}
+{{ 'ignored trans filter with context'|trans({}, {context: 'another context'}) }}
+
+{% trans %}ignored trans tag{% endtrans %}
+{% trans with {context: 'the context'} %}ignored trans tag with context{% endtrans %}

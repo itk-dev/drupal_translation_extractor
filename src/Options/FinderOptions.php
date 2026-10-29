@@ -15,4 +15,9 @@ final class FinderOptions
     {
         self::$ignoreVCSIgnored = $ignoreVCSIgnored;
     }
+
+    public static function reset(): void
+    {
+        self::$ignoreVCSIgnored = true;
+    }
 }

@@ -32,6 +32,16 @@ msgid "trans tag"
 msgstr "__trans tag"
 
 #, fuzzy
+msgctxt "another context"
+msgid "t filter with context"
+msgstr "__t filter with context"
+
+#, fuzzy
+msgctxt "another context"
+msgid "trans filter with context"
+msgstr "__trans filter with context"
+
+#, fuzzy
 msgctxt "the context"
 msgid "t filter with options context"
 msgstr "__t filter with options context"
@@ -45,14 +55,3 @@ msgstr "__trans filter with options context"
 msgctxt "the context"
 msgid "trans tag with context"
 msgstr "__trans tag with context"
-
-#, fuzzy
-msgctxt "another context"
-msgid "t filter with context"
-msgstr "__t filter with context"
-
-#, fuzzy
-msgctxt "another context"
-msgid "trans filter with context"
-msgstr "__trans filter with context"
-

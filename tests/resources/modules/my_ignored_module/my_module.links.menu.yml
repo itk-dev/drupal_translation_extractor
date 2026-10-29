@@ -1,0 +1,13 @@
+# https://www.drupal.org/docs/drupal-apis/menu-api/providing-module-defined-menu-links
+my_module.admin:
+  title: "ignored my_module admin.link title"
+  title_context: "admin"
+  description: "ignored my_module admin.link title"
+  description_context: "admin"
+
+my_module.editor:
+  title: "ignored my_module editor.link title"
+  title_context: "editor"
+
+my_module.no_context:
+  title: "ignored my_module no_context.link title"

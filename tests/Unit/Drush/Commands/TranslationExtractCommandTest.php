@@ -45,6 +45,7 @@ final class TranslationExtractCommandTest extends AbstractTestCase
             'source' => $this->getResourcePath('modules/my_module/templates/'),
             '--force' => true,
             '--output' => $outputPath,
+            '--sort' => 'asc',
         ]);
         $expectedPath = $this->getResourcePath('expected/'.__FUNCTION__.'.da.po');
 
@@ -55,6 +56,51 @@ final class TranslationExtractCommandTest extends AbstractTestCase
         $this->assertStringNotContainsString('[WARNING] No translation messages were found.', $content);
 
         $this->assertPoFileEqualsPoFile($expectedPath, $outputPath);
+    }
+
+    public function testAll(): void
+    {
+        $outputPath = tempnam(sys_get_temp_dir(), __METHOD__);
+
+        $command = $this->createCommand();
+        $input = new ArrayInput([
+            'locale' => 'da',
+            'source' => $this->getResourcePath('.'),
+            '--force' => true,
+            '--output' => $outputPath,
+            '--dump-messages' => true,
+        ]);
+
+        $output = new BufferedOutput();
+        $result = $command->run($input, $output);
+        $this->assertEquals(Command::SUCCESS, $result);
+        $content = $output->fetch();
+        $this->assertStringNotContainsString('[WARNING] No translation messages were found.', $content);
+
+        $this->assertStringContainsString('36 messages were successfully', $content);
+    }
+
+    public function testAllFinderDoNotIgnoreVCSIgnored(): void
+    {
+        $outputPath = tempnam(sys_get_temp_dir(), __METHOD__);
+
+        $command = $this->createCommand();
+        $input = new ArrayInput([
+            'locale' => 'da',
+            'source' => $this->getResourcePath('.'),
+            '--force' => true,
+            '--output' => $outputPath,
+            '--dump-messages' => true,
+            '--finder-do-not-ignore-vcs-ignored' => true,
+        ]);
+
+        $output = new BufferedOutput();
+        $result = $command->run($input, $output);
+        $this->assertEquals(Command::SUCCESS, $result);
+        $content = $output->fetch();
+        $this->assertStringNotContainsString('[WARNING] No translation messages were found.', $content);
+
+        $this->assertStringContainsString('60 messages were successfully', $content);
     }
 
     private function createCommand(): TranslationExtractCommand

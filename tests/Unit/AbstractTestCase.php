@@ -3,6 +3,7 @@
 namespace Drupal\drupal_translation_extractor\Test\Unit;
 
 use Drupal\Core\Template\TwigTransTokenParser;
+use Drupal\drupal_translation_extractor\Options\FinderOptions;
 use Drupal\drupal_translation_extractor\Twig\Extension\ItkTranslationExtractorTwigExtension;
 use PHPUnit\Framework\TestCase;
 use Twig;
@@ -11,6 +12,11 @@ use Twig\Loader\FilesystemLoader;
 
 abstract class AbstractTestCase extends TestCase
 {
+    protected function setUp(): void
+    {
+        FinderOptions::reset();
+    }
+
     protected function getResourcePath(string $path = ''): string
     {
         $resourcePath = dirname(__DIR__).'/resources/'.$path;
