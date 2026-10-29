@@ -7,6 +7,7 @@ namespace Drupal\drupal_translation_extractor\Drush\Commands;
 use Drupal\Component\Gettext\PoStreamReader;
 use Drupal\Core\Extension\ExtensionPathResolver;
 use Drupal\drupal_translation_extractor\Exception\InvalidArgumentException;
+use Drupal\drupal_translation_extractor\Options\FinderOptions;
 use Drupal\drupal_translation_extractor\Translation\Dumper\PoItem;
 use Drupal\locale\StringStorageInterface;
 use Drush\Commands\AutowireTrait;
@@ -84,6 +85,7 @@ final class TranslationExtractCommand extends Command
               new InputOption('fill-from-string-storage', null, InputOption::VALUE_NONE, 'Fill translations with values from string storage.'),
               new InputOption('project-name', null, InputOption::VALUE_REQUIRED, 'Project name. If not set, a project name will be computed based on the source.'),
               new InputOption('require-context', null, InputOption::VALUE_OPTIONAL, 'If set, all translations must use a context. If a value is provided, all translation must use that exact context. Use `--debug` to list translations not using a valid context.', default: false),
+              new InputOption('finder-do-not-ignore-vcs-ignored', null, InputOption::VALUE_NONE, 'If set, all finders will not ignore files ignored by VCS.'),
           ])
           ->setHelp(<<<'EOF'
 
@@ -160,6 +162,7 @@ EOF
 
         $io->comment('Parsing templates...');
         $prefix = $input->getOption('no-fill') ? self::NO_FILL_PREFIX : $input->getOption('prefix');
+        FinderOptions::setIgnoreVCSIgnored(true !== $input->getOption('finder-do-not-ignore-vcs-ignored'));
         $extractedCatalogue = $this->extractMessages($input->getArgument('locale'), $codePaths, $prefix);
 
         if (count($extractedCatalogue->all()) > 0) {

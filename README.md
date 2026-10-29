@@ -61,6 +61,16 @@ A couple of new option have been added:
 > [!TIP]
 > Use `--debug` along with `--require-context` to list any messages not using a valid context.
 
+`--finder-do-not-ignore-vcs-ignored` If set, all finders will _not_ ignore VCS ignored files.
+
+> [!NOTE]
+> This option is (probably) mostly useful when developing Drupal modules using [DDEV Drupal
+> Contrib](https://github.com/ddev/ddev-drupal-contrib) where the [DDEV
+> docroot](https://docs.ddev.com/en/stable/users/configuration/config/#docroot) is ignored. See
+> <https://www.drupal.org/project/views_data_export/issues/3508243> and
+> <https://github.com/ddev/ddev-drupal-contrib/issues/25> (and <https://github.com/ddev/ddev-drupal-contrib/issues/177>)
+> for some details.
+
 ### Example
 
 Running

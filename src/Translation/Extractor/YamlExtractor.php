@@ -3,8 +3,6 @@
 namespace Drupal\drupal_translation_extractor\Translation\Extractor;
 
 use Drupal\drupal_translation_extractor\Translation\Dumper\PoItem;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Translation\Extractor\AbstractFileExtractor;
 use Symfony\Component\Translation\Extractor\ExtractorInterface;
 use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Yaml\Exception\ParseException;
@@ -26,7 +24,7 @@ class YamlExtractor extends AbstractFileExtractor implements ExtractorInterface
     // https://www.drupal.org/docs/drupal-apis/routing-system/structure-of-routes
     private const string ROUTING = 'routing.yml';
 
-    private static array $supportedFileExtensions = [
+    protected static array $supportedFileExtensions = [
         self::LINKS_ACTION,
         self::LINKS_CONTEXTUAL,
         self::LINKS_MENU,
@@ -72,39 +70,6 @@ class YamlExtractor extends AbstractFileExtractor implements ExtractorInterface
     public function setPrefix(string $prefix): void
     {
         $this->prefix = $prefix;
-    }
-
-    private function getFileExtension(string $file): ?string
-    {
-        foreach (self::$supportedFileExtensions as $extension) {
-            if (str_ends_with($file, $extension)) {
-                return $extension;
-            }
-        }
-
-        return null;
-    }
-
-    protected function canBeExtracted(string $file): bool
-    {
-        return $this->isFile($file)
-            && null !== $this->getFileExtension($file);
-    }
-
-    protected function extractFromDirectory(array|string $resource): iterable|Finder
-    {
-        if (!class_exists(Finder::class)) {
-            throw new \LogicException(\sprintf('You cannot use "%s" as the "symfony/finder" package is not installed. Try running "composer require symfony/finder".', static::class));
-        }
-
-        $finder = new Finder()
-            ->ignoreVCSIgnored(true)
-            ->followLinks();
-
-        return $finder
-            ->files()
-            ->name(array_map(static fn (string $ext) => '*.'.$ext, self::$supportedFileExtensions))
-            ->in($resource);
     }
 
     private function extractLinks(array $content, MessageCatalogue $catalogue): void
