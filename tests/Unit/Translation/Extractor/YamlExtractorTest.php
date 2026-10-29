@@ -14,7 +14,7 @@ final class YamlExtractorTest extends AbstractTestCase
     public function testLinksAction(): void
     {
         $resource = [
-            $this->getResourcePath('my_module.links.action.yml'),
+            $this->getResourcePath('modules/my_module/my_module.links.action.yml'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
@@ -36,7 +36,7 @@ final class YamlExtractorTest extends AbstractTestCase
     public function testLinksContextual(): void
     {
         $resource = [
-            $this->getResourcePath('my_module.links.contextual.yml'),
+            $this->getResourcePath('modules/my_module/my_module.links.contextual.yml'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
@@ -58,7 +58,7 @@ final class YamlExtractorTest extends AbstractTestCase
     public function testLinksMenu(): void
     {
         $resource = [
-            $this->getResourcePath('my_module.links.menu.yml'),
+            $this->getResourcePath('modules/my_module/my_module.links.menu.yml'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
@@ -80,7 +80,7 @@ final class YamlExtractorTest extends AbstractTestCase
     public function testLinksTask(): void
     {
         $resource = [
-            $this->getResourcePath('my_module.links.task.yml'),
+            $this->getResourcePath('modules/my_module/my_module.links.task.yml'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
@@ -102,7 +102,7 @@ final class YamlExtractorTest extends AbstractTestCase
     public function testRouting(): void
     {
         $resource = [
-            $this->getResourcePath('my_module.routing.yml'),
+            $this->getResourcePath('modules/my_module/my_module.routing.yml'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);

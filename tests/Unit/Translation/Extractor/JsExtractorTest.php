@@ -14,7 +14,7 @@ final class JsExtractorTest extends AbstractTestCase
     public function testDrupalT(): void
     {
         $resource = [
-            $this->getResourcePath('js/script.js'),
+            $this->getResourcePath('modules/my_module/js/script.js'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
@@ -33,7 +33,7 @@ final class JsExtractorTest extends AbstractTestCase
 
     public function testDrupalTLinked(): void
     {
-        $resource = $this->getResourcePath('linked');
+        $resource = $this->getResourcePath('modules/my_linked_module');
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
 

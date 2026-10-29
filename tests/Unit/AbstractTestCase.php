@@ -13,7 +13,13 @@ abstract class AbstractTestCase extends TestCase
 {
     protected function getResourcePath(string $path = ''): string
     {
-        return dirname(__DIR__).'/resources/'.$path;
+        $resourcePath = dirname(__DIR__).'/resources/'.$path;
+
+        if (!file_exists($resourcePath)) {
+            throw new \RuntimeException(sprintf('Invalid resource path: %s', $path));
+        }
+
+        return $resourcePath;
     }
 
     protected function createTwig(): Environment

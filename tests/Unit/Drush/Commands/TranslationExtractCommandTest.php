@@ -42,7 +42,7 @@ final class TranslationExtractCommandTest extends AbstractTestCase
         $command = $this->createCommand();
         $input = new ArrayInput([
             'locale' => 'da',
-            'source' => $this->getResourcePath('templates/'),
+            'source' => $this->getResourcePath('modules/my_module/templates/'),
             '--force' => true,
             '--output' => $outputPath,
         ]);

@@ -17,7 +17,7 @@ final class PhpExtractorTest extends AbstractTestCase
     public function testTransMethod(): void
     {
         $resource = [
-            $this->getResourcePath('src/MyClass.php'),
+            $this->getResourcePath('modules/my_module/src/MyClass.php'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
@@ -40,7 +40,7 @@ final class PhpExtractorTest extends AbstractTestCase
 
     public function testTransMethodLinked(): void
     {
-        $resource = $this->getResourcePath('linked');
+        $resource = $this->getResourcePath('modules/my_linked_module');
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
 
@@ -63,7 +63,7 @@ final class PhpExtractorTest extends AbstractTestCase
     public function testTransMethodDrupal(): void
     {
         $resource = [
-            $this->getResourcePath('src/MyClassDrupal.php'),
+            $this->getResourcePath('modules/my_module/src/MyClassDrupal.php'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
@@ -103,7 +103,7 @@ final class PhpExtractorTest extends AbstractTestCase
     public function testTranslatableMarkup(): void
     {
         $resource = [
-            $this->getResourcePath('src/MyClass.php'),
+            $this->getResourcePath('modules/my_module/src/MyClass.php'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
@@ -127,7 +127,7 @@ final class PhpExtractorTest extends AbstractTestCase
     public function testTranslatableMarkupDrupal(): void
     {
         $resource = [
-            $this->getResourcePath('src/MyClassDrupal.php'),
+            $this->getResourcePath('modules/my_module/src/MyClassDrupal.php'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
@@ -153,7 +153,7 @@ final class PhpExtractorTest extends AbstractTestCase
     public function testAnnotationPropertyTranslation(): void
     {
         $resource = [
-            $this->getResourcePath('src/MyPlugin.php'),
+            $this->getResourcePath('modules/my_module/src/MyPlugin.php'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
