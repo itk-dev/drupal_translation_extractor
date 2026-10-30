@@ -29,7 +29,7 @@ class PoItem extends \Drupal\Component\Gettext\PoItem implements \Stringable
             $string = '#, '.implode(',', $flags)."\n".$string;
         }
 
-        return (string) $string;
+        return $string;
     }
 
     public static function joinStrings(array $strings, string $prefix = ''): string
