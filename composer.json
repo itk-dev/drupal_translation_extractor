@@ -7,8 +7,8 @@
         "php": "^8.4",
         "drupal/core": "^11.4",
         "drush/drush": "^13.8",
-        "symfony/translation": "^6 || ^7 || ^8",
-        "symfony/twig-bridge": "^6 || ^7 || ^8"
+        "symfony/translation": "^7 || ^8",
+        "symfony/twig-bridge": "^7 || ^8"
     },
     "require-dev": {
         "drupal/core-dev": "^11.4",
