@@ -6,8 +6,6 @@ use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Translation\Extractor\AbstractFileExtractor;
 use Symfony\Component\Translation\Extractor\ExtractorInterface;
 use Symfony\Component\Translation\Extractor\Visitor\AbstractVisitor;
 use Symfony\Component\Translation\MessageCatalogue;
@@ -32,11 +30,12 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
             throw new \LogicException(\sprintf('You cannot use "%s" as the "nikic/php-parser" package is not installed. Try running "composer require nikic/php-parser".', static::class));
         }
 
-        $this->parser = (new ParserFactory())->createForHostVersion();
+        $this->parser = new ParserFactory()->createForHostVersion();
     }
 
     public function extract(iterable|string $resource, MessageCatalogue $catalogue): void
     {
+        /** @var \SplFileInfo $file */
         foreach ($this->extractFiles($resource) as $file) {
             $traverser = new NodeTraverser();
 
@@ -59,30 +58,13 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
         $this->prefix = $prefix;
     }
 
-    private static array $supportedFileExtensions = [
+    protected static array $supportedFileExtensions = [
         'php', 'install', 'module', 'theme',
     ];
 
     protected function canBeExtracted(string $file): bool
     {
-        return in_array(pathinfo($file, \PATHINFO_EXTENSION), self::$supportedFileExtensions, true)
-            && $this->isFile($file)
+        return parent::canBeExtracted($file)
             && preg_match('/\bt\(|->t(?:rans)?\(|TranslatableMarkup|@Translation\(/i', file_get_contents($file));
-    }
-
-    protected function extractFromDirectory(array|string $resource): iterable|Finder
-    {
-        if (!class_exists(Finder::class)) {
-            throw new \LogicException(\sprintf('You cannot use "%s" as the "symfony/finder" package is not installed. Try running "composer require symfony/finder".', static::class));
-        }
-
-        $finder = (new Finder())
-            ->ignoreVCSIgnored(true)
-            ->followLinks();
-
-        return $finder
-            ->files()
-            ->name(array_map(static fn (string $ext) => '*.'.$ext, self::$supportedFileExtensions))
-            ->in($resource);
     }
 }

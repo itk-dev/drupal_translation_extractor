@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [PR-16](https://github.com/itk-dev/drupal_translation_extractor/pull/16)
+  * Added DDEV for development.
+  * Required Drupal ^11.4 and Drush ^13.8
+
 ## [1.4.0] - 2026-09-28
 
 * [PR-15](https://github.com/itk-dev/drupal_translation_extractor/pull/15)

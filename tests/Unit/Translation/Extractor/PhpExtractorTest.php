@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\drupal_translation_extractor\Test\Unit\Translation\Extractor;
 
+use Drupal\drupal_translation_extractor\Options\FinderOptions;
 use Drupal\drupal_translation_extractor\Test\Unit\AbstractTestCase;
 use Drupal\drupal_translation_extractor\Translation\Dumper\PoItem;
 use Drupal\drupal_translation_extractor\Translation\Extractor\PhpExtractor;
@@ -17,7 +18,7 @@ final class PhpExtractorTest extends AbstractTestCase
     public function testTransMethod(): void
     {
         $resource = [
-            $this->getResourcePath('src/MyClass.php'),
+            $this->getResourcePath('modules/my_module/src/MyClass.php'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
@@ -40,7 +41,7 @@ final class PhpExtractorTest extends AbstractTestCase
 
     public function testTransMethodLinked(): void
     {
-        $resource = $this->getResourcePath('linked');
+        $resource = $this->getResourcePath('modules/my_linked_module');
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
 
@@ -63,7 +64,7 @@ final class PhpExtractorTest extends AbstractTestCase
     public function testTransMethodDrupal(): void
     {
         $resource = [
-            $this->getResourcePath('src/MyClassDrupal.php'),
+            $this->getResourcePath('modules/my_module/src/MyClassDrupal.php'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
@@ -103,7 +104,7 @@ final class PhpExtractorTest extends AbstractTestCase
     public function testTranslatableMarkup(): void
     {
         $resource = [
-            $this->getResourcePath('src/MyClass.php'),
+            $this->getResourcePath('modules/my_module/src/MyClass.php'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
@@ -127,7 +128,7 @@ final class PhpExtractorTest extends AbstractTestCase
     public function testTranslatableMarkupDrupal(): void
     {
         $resource = [
-            $this->getResourcePath('src/MyClassDrupal.php'),
+            $this->getResourcePath('modules/my_module/src/MyClassDrupal.php'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
@@ -153,7 +154,7 @@ final class PhpExtractorTest extends AbstractTestCase
     public function testAnnotationPropertyTranslation(): void
     {
         $resource = [
-            $this->getResourcePath('src/MyPlugin.php'),
+            $this->getResourcePath('modules/my_module/src/MyPlugin.php'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
@@ -174,6 +175,55 @@ final class PhpExtractorTest extends AbstractTestCase
         $this->assertCount(3, $messages->all('my_plugin'));
         $this->assertContains('my_plugin_text', $domains);
         $this->assertCount(1, $messages->all('my_plugin_text'));
+    }
+
+    public function testAll(): void
+    {
+        $resource = $this->getResourcePath('.');
+        $locale = 'da';
+        $messages = new MessageCatalogue($locale);
+
+        $extractor = $this->createExtractor(
+            visitors: [
+                new TranslationAnnotationVisitor(),
+            ]
+        );
+        $extractor->extract($resource, $messages);
+
+        $domains = $messages->getDomains();
+
+        $this->assertCount(3, $domains);
+        $this->assertContains(PoItem::NO_CONTEXT, $domains);
+        $this->assertCount(1, $messages->all(PoItem::NO_CONTEXT));
+        $this->assertContains('my_plugin', $domains);
+        $this->assertCount(3, $messages->all('my_plugin'));
+        $this->assertContains('my_plugin_text', $domains);
+        $this->assertCount(1, $messages->all('my_plugin_text'));
+    }
+
+    public function testAllFinderDoNotIgnoreVCSIgnored(): void
+    {
+        FinderOptions::setIgnoreVCSIgnored(false);
+        $resource = $this->getResourcePath('.');
+        $locale = 'da';
+        $messages = new MessageCatalogue($locale);
+
+        $extractor = $this->createExtractor(
+            visitors: [
+                new TranslationAnnotationVisitor(),
+            ]
+        );
+        $extractor->extract($resource, $messages);
+
+        $domains = $messages->getDomains();
+
+        $this->assertCount(3, $domains);
+        $this->assertContains(PoItem::NO_CONTEXT, $domains);
+        $this->assertCount(2 * 1, $messages->all(PoItem::NO_CONTEXT));
+        $this->assertContains('my_plugin', $domains);
+        $this->assertCount(2 * 3, $messages->all('my_plugin'));
+        $this->assertContains('my_plugin_text', $domains);
+        $this->assertCount(2 * 1, $messages->all('my_plugin_text'));
     }
 
     private function createExtractor(array $visitors): PhpExtractor

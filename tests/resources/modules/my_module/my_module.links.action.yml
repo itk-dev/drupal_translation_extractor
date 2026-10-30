@@ -1,0 +1,11 @@
+# https://www.drupal.org/docs/drupal-apis/menu-api/providing-module-defined-local-actions
+my_module.admin:
+  title: "my_module admin.action title"
+  title_context: "admin"
+
+my_module.editor:
+  title: "my_module editor.action title"
+  title_context: "editor"
+
+my_module.no_context:
+  title: "my_module no_context.action title"

@@ -14,7 +14,7 @@ final class TwigExtractorTest extends AbstractTestCase
     public function testTransMethod(): void
     {
         $resource = [
-            $this->getResourcePath('templates/my_template.html.twig'),
+            $this->getResourcePath('modules/my_module/templates/my_template.html.twig'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
@@ -35,7 +35,7 @@ final class TwigExtractorTest extends AbstractTestCase
 
     public function testTransMethodLinked(): void
     {
-        $resource = $this->getResourcePath('linked');
+        $resource = $this->getResourcePath('modules/my_linked_module');
         $locale = 'da';
         $messages = new MessageCatalogue($locale);
 
@@ -56,7 +56,7 @@ final class TwigExtractorTest extends AbstractTestCase
     public function testDrupalTransMethod(): void
     {
         $resource = [
-            $this->getResourcePath('templates/my_template_drupal.html.twig'),
+            $this->getResourcePath('modules/my_module/templates/my_template_drupal.html.twig'),
         ];
         $locale = 'da';
         $messages = new MessageCatalogue($locale);

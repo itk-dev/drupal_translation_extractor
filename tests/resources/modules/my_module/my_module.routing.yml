@@ -1,0 +1,14 @@
+# https://www.drupal.org/docs/drupal-apis/routing-system/structure-of-routes
+my_module.admin:
+  defaults:
+    _title: "my_module admin title"
+    _title_context: "admin"
+
+my_module.editor:
+  defaults:
+    _title: "my_module editor title"
+    _title_context: "editor"
+
+my_module.no_context:
+  defaults:
+    _title: "my_module no_context title"

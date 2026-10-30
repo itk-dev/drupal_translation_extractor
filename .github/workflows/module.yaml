@@ -1,0 +1,53 @@
+name: Module
+
+env:
+  COMPOSE_USER: runner
+  # https://getcomposer.org/doc/03-cli.md#composer-auth
+  COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.GITHUB_TOKEN }}"} }'
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  php:
+    name: PHP
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: go-task/setup-task@v2
+      # https://github.com/ddev/github-action-setup-ddev
+      - uses: ddev/github-action-setup-ddev@v1
+        with:
+          autostart: false
+
+      - name: Start DDEV
+        # https://github.com/ddev/ddev-drupal-contrib
+        run: |
+          ddev start
+          ddev poser --no-interaction --no-security-blocking
+          ddev symlink-project
+
+      - name: Composer - validate
+        run: ddev composer validate --strict
+
+      - name: Composer - normalize
+        run: ddev composer normalize --dry-run
+
+      - name: PHP coding standards
+        run: ddev php vendor/bin/php-cs-fixer fix --dry-run --diff
+
+      - name: Twig coding standards
+        run: ddev php vendor/bin/twig-cs-fixer
+
+      - name: PHPStan
+        run: ddev phpstan
+
+      - name: Rector
+        run: ddev php vendor/bin/rector --dry-run
+
+      - name: Tests
+        run: ddev phpunit

@@ -1,0 +1,7 @@
+<?php
+
+function my_module() {
+  t('ignored My module');
+  t('ignored My module', [], ['context' => 'the module context']);
+  t('ignored My module', options: ['context' => 'another module context']);
+}

@@ -2,13 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Drupal\drupal_translation_extractor\Command;
+namespace Drupal\drupal_translation_extractor\Drush\Commands;
 
 use Drupal\Component\Gettext\PoStreamReader;
 use Drupal\Core\Extension\ExtensionPathResolver;
 use Drupal\drupal_translation_extractor\Exception\InvalidArgumentException;
+use Drupal\drupal_translation_extractor\Options\FinderOptions;
 use Drupal\drupal_translation_extractor\Translation\Dumper\PoItem;
 use Drupal\locale\StringStorageInterface;
+use Drush\Commands\AutowireTrait;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -16,6 +18,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Translation\Catalogue\MergeOperation;
 use Symfony\Component\Translation\Catalogue\TargetOperation;
 use Symfony\Component\Translation\Extractor\ExtractorInterface;
@@ -34,6 +37,8 @@ use Symfony\Component\Translation\Writer\TranslationWriterInterface;
 )]
 final class TranslationExtractCommand extends Command
 {
+    use AutowireTrait;
+
     private const string ASC = 'asc';
     private const string DESC = 'desc';
     private const array SORT_ORDERS = [self::ASC, self::DESC];
@@ -44,8 +49,11 @@ final class TranslationExtractCommand extends Command
     private const string NO_FILL_PREFIX = "\0NoFill\0";
 
     public function __construct(
+        #[Autowire(service: 'drupal_translation_extractor.translation_writer')]
         private readonly TranslationWriterInterface $writer,
+        #[Autowire(service: 'drupal_translation_extractor.translation_reader')]
         private readonly PoStreamReader $reader,
+        #[Autowire(service: 'drupal_translation_extractor.extractor')]
         private readonly ExtractorInterface $extractor,
         private readonly ExtensionPathResolver $extensionPathResolver,
         private readonly StringStorageInterface $stringStorage,
@@ -77,6 +85,7 @@ final class TranslationExtractCommand extends Command
               new InputOption('fill-from-string-storage', null, InputOption::VALUE_NONE, 'Fill translations with values from string storage.'),
               new InputOption('project-name', null, InputOption::VALUE_REQUIRED, 'Project name. If not set, a project name will be computed based on the source.'),
               new InputOption('require-context', null, InputOption::VALUE_OPTIONAL, 'If set, all translations must use a context. If a value is provided, all translation must use that exact context. Use `--debug` to list translations not using a valid context.', default: false),
+              new InputOption('finder-do-not-ignore-vcs-ignored', null, InputOption::VALUE_NONE, 'If set, all finders will not ignore files ignored by VCS.'),
           ])
           ->setHelp(<<<'EOF'
 
@@ -153,48 +162,51 @@ EOF
 
         $io->comment('Parsing templates...');
         $prefix = $input->getOption('no-fill') ? self::NO_FILL_PREFIX : $input->getOption('prefix');
+        FinderOptions::setIgnoreVCSIgnored(true !== $input->getOption('finder-do-not-ignore-vcs-ignored'));
         $extractedCatalogue = $this->extractMessages($input->getArgument('locale'), $codePaths, $prefix);
 
-        $requireContext = $input->getOption('require-context');
-        if (null === $requireContext) {
-            // All translations must use a context
-            $domains = $extractedCatalogue->getDomains();
-            if (in_array(PoItem::NO_CONTEXT, $domains)) {
-                $errorIo->error('All translations must use a context.');
+        if (count($extractedCatalogue->all()) > 0) {
+            $requireContext = $input->getOption('require-context');
+            if (null === $requireContext) {
+                // All translations must use a context
+                $domains = $extractedCatalogue->getDomains();
+                if (in_array(PoItem::NO_CONTEXT, $domains)) {
+                    $errorIo->error('All translations must use a context.');
 
-                if ($output->isDebug()) {
-                    $io->section('Translations not using a context');
+                    if ($output->isDebug()) {
+                        $io->section('Translations not using a context');
 
-                    $messages = array_keys($extractedCatalogue->all(PoItem::NO_CONTEXT));
-                    $io->listing($messages);
-                }
-
-                return self::FAILURE;
-            }
-        } elseif (false !== $requireContext) {
-            $context = $requireContext;
-            // All translations must use the specified context
-            $domains = $extractedCatalogue->getDomains();
-            if (1 !== count($domains) || reset($domains) !== $context) {
-                $errorIo->error(sprintf('All translations must use the "%s" context.', $context));
-
-                if ($output->isDebug()) {
-                    $io->section(sprintf('Translations not using the "%s" context', $context));
-
-                    foreach ($extractedCatalogue->getDomains() as $domain) {
-                        if ($domain === $context) {
-                            continue;
-                        }
-
-                        $io->text(sprintf('Context "%s"', PoItem::formatContext($domain)));
-                        $io->newLine();
-
-                        $messages = array_keys($extractedCatalogue->all($domain));
+                        $messages = array_keys($extractedCatalogue->all(PoItem::NO_CONTEXT));
                         $io->listing($messages);
                     }
-                }
 
-                return self::FAILURE;
+                    return self::FAILURE;
+                }
+            } elseif (false !== $requireContext) {
+                $context = $requireContext;
+                // All translations must use the specified context
+                $domains = $extractedCatalogue->getDomains();
+                if (1 !== count($domains) || reset($domains) !== $context) {
+                    $errorIo->error(sprintf('All translations must use the "%s" context.', $context));
+
+                    if ($output->isDebug()) {
+                        $io->section(sprintf('Translations not using the "%s" context', $context));
+
+                        foreach ($extractedCatalogue->getDomains() as $domain) {
+                            if ($domain === $context) {
+                                continue;
+                            }
+
+                            $io->text(sprintf('Context "%s"', PoItem::formatContext($domain)));
+                            $io->newLine();
+
+                            $messages = array_keys($extractedCatalogue->all($domain));
+                            $io->listing($messages);
+                        }
+                    }
+
+                    return self::FAILURE;
+                }
             }
         }
 
@@ -206,9 +218,9 @@ EOF
         $currentCatalogue = $this->loadCurrentMessages($input->getArgument('locale'), $outputPath);
         if (true === $input->getOption('fill-from-string-storage')) {
             // Merge in translations from string storage.
-            $currentCatalogue = (new MergeOperation(
+            $currentCatalogue = new MergeOperation(
                 $this->loadTranslatedMessages($extractedCatalogue),
-                $currentCatalogue))->getResult();
+                $currentCatalogue)->getResult();
         }
 
         if (null !== $domain = $input->getOption('domain')) {

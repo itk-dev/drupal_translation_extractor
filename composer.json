@@ -4,31 +4,35 @@
     "license": "MIT",
     "type": "drupal-module",
     "require": {
-        "php": "^8.3",
-        "drupal/core": "^10 || ^11",
-        "symfony/translation": "^6 || ^7 || ^8",
-        "symfony/twig-bridge": "^6 || ^7 || ^8"
+        "php": "^8.4",
+        "drupal/core": "^11.4",
+        "drush/drush": "^13.8",
+        "symfony/translation": "^7 || ^8",
+        "symfony/twig-bridge": "^7 || ^8"
     },
     "require-dev": {
-        "ergebnis/composer-normalize": "^2.48",
-        "friendsofphp/php-cs-fixer": "^3.91",
-        "phpstan/phpstan": "^2.1",
-        "phpunit/phpunit": "^12.5",
-        "rector/rector": "^2.3",
-        "vincentlanglet/twig-cs-fixer": "^3.11"
+        "drupal/core-dev": "^11.4",
+        "ergebnis/composer-normalize": "^2.54",
+        "friendsofphp/php-cs-fixer": "^3.95",
+        "rector/rector": "^2.8",
+        "vincentlanglet/twig-cs-fixer": "^4.1"
     },
     "autoload-dev": {
         "psr-4": {
             "Drupal\\drupal_translation_extractor\\": "src/",
             "Drupal\\drupal_translation_extractor\\Test\\": "tests/",
-            "Drupal\\locale\\": "vendor/drupal/core/modules/locale/src/"
+            "Drupal\\locale\\": "web/core/modules/locale/src/"
         }
     },
     "config": {
         "allow-plugins": {
-            "drupal/core-composer-scaffold": false,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "drupal/core-composer-scaffold": true,
             "ergebnis/composer-normalize": true,
-            "symfony/runtime": true
+            "php-http/discovery": true,
+            "phpstan/extension-installer": true,
+            "symfony/runtime": true,
+            "tbachert/spi": true
         }
     }
 }

@@ -4,7 +4,7 @@ namespace Drupal\drupal_translation_extractor\Translation\Dumper;
 
 use Drupal\drupal_translation_extractor\Exception\InvalidArgumentException;
 
-class PoHeader extends \Drupal\Component\Gettext\PoHeader
+class PoHeader extends \Drupal\Component\Gettext\PoHeader implements \Stringable
 {
     public function __construct(string $langcode)
     {
